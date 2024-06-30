@@ -1,108 +1,68 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2024 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
+#include "gpio.h"
+#include "stm32f4xx_hal.h"
 
 /* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
+#define LED1_PIN GPIO_PIN_0
+#define LED2_PIN GPIO_PIN_7
+#define LED3_PIN GPIO_PIN_14
+#define LED_PORT GPIOB
 
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
+#define BUTTON_PIN GPIO_PIN_13
+#define BUTTON_PORT GPIOC
 
 /* Private variables ---------------------------------------------------------*/
+uint16_t led_pins_seq1[] = {LED1_PIN, LED2_PIN, LED3_PIN};
+uint16_t led_pins_seq2[] = {LED1_PIN, LED3_PIN, LED2_PIN};
 
-/* USER CODE BEGIN PV */
+uint8_t num_leds = sizeof(led_pins_seq1) / sizeof(led_pins_seq1[0]);
 
-/* USER CODE END PV */
+uint8_t current_led = 0; // Índice del LED actual
+uint8_t sequence = 0; // Secuencia actual: 0 - Secuencia alterna: 1
 
-/* Private function prototypes -----------------------------------------------*/
+/* Function Prototypes -------------------------------------------------------*/
 void SystemClock_Config(void);
-/* USER CODE BEGIN PFP */
+void MX_GPIO_Init(void);
+uint8_t ReadButton(void);
 
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
+/* Main Program --------------------------------------------------------------*/
 int main(void)
 {
-
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
+  MX_GPIO_Init();
 
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  /* USER CODE BEGIN 2 */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+    if (ReadButton())
+    {
+      sequence = !sequence; // Alternar secuencia
+      HAL_Delay(200); // Debounce delay
+    }
 
-    /* USER CODE BEGIN 3 */
+    uint16_t *current_sequence;
+
+    if (sequence == 0) {
+
+    	current_sequence = led_pins_seq1;
+
+	} else {
+
+		current_sequence = led_pins_seq2;
+
+	}
+
+    HAL_GPIO_WritePin(LED_PORT, current_sequence[current_led], GPIO_PIN_SET);
+    HAL_Delay(200);
+    HAL_GPIO_WritePin(LED_PORT, current_sequence[current_led], GPIO_PIN_RESET);
+    HAL_Delay(200);
+
+    current_led = (current_led + 1) % num_leds; // Mover al siguiente LED
   }
-  /* USER CODE END 3 */
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -140,38 +100,49 @@ void SystemClock_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
 
-/* USER CODE END 4 */
+/* Read Button with Debounce -------------------------------------------------*/
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+/*
+ *
+ * Esta función asegura que solo se reconozcan cambios de estado
+ * del botón como pulsaciones válidas después de que haya pasado
+ * un tiempo mínimo (debounceDelay) desde el último cambio detectado,
+ * lo que ayuda a evitar lecturas erráticas debido a fluctuaciones
+ * temporales en el estado del botón.
+ *
+ * */
+uint8_t ReadButton(void)
+{
+  static uint8_t lastButtonState = GPIO_PIN_RESET;
+  static uint32_t lastDebounceTime = 0;
+  uint32_t debounceDelay = 50;
+
+  uint8_t currentState = HAL_GPIO_ReadPin(BUTTON_PORT, BUTTON_PIN);
+
+  if (currentState != lastButtonState)
+  {
+    lastDebounceTime = HAL_GetTick();
+  }
+
+  if ((HAL_GetTick() - lastDebounceTime) > debounceDelay)
+  {
+    if (currentState == GPIO_PIN_SET)
+    {
+      lastButtonState = currentState;
+      return 1;
+    }
+  }
+
+  lastButtonState = currentState;
+  return 0;
+}
+
 void Error_Handler(void)
 {
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+
   __disable_irq();
   while (1)
   {
   }
-  /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
