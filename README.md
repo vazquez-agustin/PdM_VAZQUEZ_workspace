@@ -1,9 +1,14 @@
-Carpeta de trabajos prácticos
+# Universidad de Buenos Aires
 
-Materia: Programación de Microcontroladores
+# Curso de especialización en Sistemas Embebidos
 
-Docente: Patricio Bos
+## Carpeta de trabajos prácticos
 
-Universidad de Buenos Aires 
+**Materia:** Programación de Microcontroladores
 
-Laboratorio de Sistemas Embebidos
+**Docente:** Patricio Bos
+
+**Alumno:** Agustin Jesus Vazquez
+
+
+
