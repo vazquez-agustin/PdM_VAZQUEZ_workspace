@@ -1,6 +1,6 @@
-Trabajo Práctico N°1
+# Trabajo Práctico N°1
 
-Punto 1:
+### Punto 1:
 
 Implementar un programa que genere una secuencia periódica con los leds de la placa NUCLEO-F429ZI.
 
@@ -11,6 +11,6 @@ Ejemplo: Led1(ON) 200ms, Leds(OFF) 200ms, Led2(ON) 200ms, Leds(OFF) 200ms, Led3(
 
 Algunas preguntas para pensar el ejercicio:
 
-* ¿De qué serviría usar un array de “leds” con la secuencia en el programa? ¿Qué pasa con nuestro programa si nos piden agregar/sacar/cambiar un led de la secuencia?
+* **¿De qué serviría usar un array de “leds” con la secuencia en el programa? ¿Qué pasa con nuestro programa si nos piden agregar/sacar/cambiar un led de la secuencia?**
 
 Usar un arreglo de array para manejar los LEDs ayudaría a mejorar la escalabilidad y el código sería más fácil de mantener, ahorrando también más cantidad de líneas. Si luego quisiera agregar, eliminar o cambiar un LED de la secuencia, solo con modificar el array es suficiente. Esto evitaría el trabajo de cambiar múltiples líneas de código en el bucle principal.
