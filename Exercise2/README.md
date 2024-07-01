@@ -1,15 +1,27 @@
-Trabajo Práctico N°2
+# Trabajo Práctico N°2
 
-Punto 1:
-
+### Punto 1:
 
 Implementar las funciones auxiliares necesarias para usar retardos no bloqueantes en un archivo fuente main.c con su correspondiente archivo de cabecera main.h.
 
 En main.h se deben ubicar los prototipos de las siguientes funciones y las declaraciones
 
-typedef uint32_t tick_t; // Qué biblioteca se debe incluir para que esto compile?
+typedef uint32_t tick_t;
 
-typedef bool bool_t;	  // Qué biblioteca se debe incluir para que esto compile?
+* **¿Qué biblioteca se debe incluir para que esto compile?**
+
+Se debe incluir la biblioteca estándar de C (<stdint.h>) que define los tipos de enteros con tamaños específicos.
+
+                                         include <stdint.h>
+
+
+typedef bool bool_t;
+
+* **¿Qué biblioteca se debe incluir para que esto compile?**
+
+Se debe incluir la biblioteca estándar de C (#include <stdbool.h>) que define el tipo booleano.
+
+                                         include <stdbool.h>
 
 typedef struct{
 
@@ -46,29 +58,47 @@ Consideraciones para la implementación:
 NOTA: para obtener una marca de tiempo se puede usar la función HAL_GetTick() que devuelve un valor que se incrementa cada 1 ms y que se puede usar como base de tiempo.
 
 
-Punto 2:
+### Punto 2:
 
 Sobre el código desarrollado para el punto 1 y sobre el mismo proyecto, implementar un programa que utilice retardos no bloqueantes y  haga parpadear el leds de la placa de desarrollo: 100 ms encendido, 100 ms apagado, en forma periódica.
 
 
-Punto 3 [opcional]:
+### Punto 3 [opcional]:
 
 Sobre el código desarrollado para el punto 2 y sobre el mismo proyecto, implementar un programa que haga parpadear el led de la placa de desarrollo en forma periódica con el siguiente patrón:
+
 5 veces con período 1 segundo y ciclo de trabajo 50%.
+
 5 veces con período 200 ms y ciclo de trabajo 50%.
+
 5 veces con período 100 ms y ciclo de trabajo 50%. 
+
 Utilizar un vector o arreglo para definir el patrón y cambiar los tiempos de parpadeo.
 
 
 Para pensar luego de resolver el ejercicio:
 
-* ¿Se pueden cambiar los tiempos de encendido de cada led fácilmente en un solo lugar del código o éstos están hardcodeados?
+* **¿Se pueden cambiar los tiempos de encendido de cada led fácilmente en un solo lugar del código o éstos están hardcodeados?**
 
-* ¿Qué bibliotecas estándar se debieron agregar para que el código compile? Si las funcionalidades crecieran, habría que pensar cuál sería el mejor lugar para incluir esas bibliotecas y algunos typedefs que se usan en el ejercicio.
+En el código proporcionado, los tiempos de encendido/apagado están "hardcodeados" directamente en el main() donde se inicializa el retardo, es decir, estos valores están incrustados en el código fuente.
+Para hacer el código más sencillo, podría definirse los tiempos de encendido/apagado como constantes. 
 
-* ¿Es adecuado el control de los parámetros pasados por el usuario que se hace en las funciones implementadas? ¿Se controla que sean valores válidos? ¿Se controla que estén dentro de los rangos correctos?
+* **¿Qué bibliotecas estándar se debieron agregar para que el código compile? Si las funcionalidades crecieran, habría que pensar cuál sería el mejor lugar para incluir esas bibliotecas y algunos typedefs que se usan en el ejercicio.**
 
-* ¿Cuán reutilizable es el código implementado? 
+Las bibliotecas estándar necesarias son:
+                                         <stdint.h> para uint32_t
+                                         <stdbool.h> para bool
 
-* ¿Cuán sencillo resulta en su implementación cambiar el patrón de tiempos de parpadeo?
+* **¿Es adecuado el control de los parámetros pasados por el usuario que se hace en las funciones implementadas? ¿Se controla que sean valores válidos? ¿Se controla que estén dentro de los rangos correctos?**
+
+En el código, una forma de controlar que los valores sean válidos sería usando un condicional para verificar los parámetros, y gestionar un error en casos de NULL o 0.
+
+* **¿Cuán reutilizable es el código implementado?**
+
+El código podría mejorar, por ejemplo, evitando el hardcoding. 
+
+
+* **¿Cuán sencillo resulta en su implementación cambiar el patrón de tiempos de parpadeo?**
+
+Hacerlo es sencillo, pero debe tenerse en cuenta la línea en donde tal patrón está siendo invocado. Esto podría mejorarse usando constantes para el tiempo de encendido y apagado.
 
