@@ -1,10 +1,19 @@
-# Trabajo Práctico N°2
+# Trabajo Práctico N°3
+
+## Objetivo:
+
+Implementar un módulo de software para trabajar con retardos no bloqueantes a partir de las funciones creadas en la práctica 2.
+
 
 ### Punto 1:
 
-Implementar las funciones auxiliares necesarias para usar retardos no bloqueantes en un archivo fuente main.c con su correspondiente archivo de cabecera main.h.
+Crear un nuevo proyecto como copia del proyecto realizado para la práctica 2.
 
-En main.h se deben ubicar los prototipos de las siguientes funciones y las declaraciones
+Crear una carpeta API dentro de la carpeta Drivers en la estructura de directorios del nuevo proyecto. Crear dentro de la carpeta API, subcarpetas /Src y /Inc.
+
+Encapsular las funciones necesarias para usar retardos no bloqueantes en un archivo fuente API_delay.c con su correspondiente archivo de cabecera API_delay.h, y ubicar estos archivos en la carpeta API creada.
+
+En API_delay.h se deben ubicar los prototipos de las funciones y declaraciones
 
 typedef uint32_t tick_t;
 
@@ -35,70 +44,41 @@ void delayInit( delay_t * delay, tick_t duration );
 bool_t delayRead( delay_t * delay );
 void delayWrite( delay_t * delay, tick_t duration );
 
-En main.c se deben ubicar la implementación de todas las funciones:
+En API_delay.c se deben ubicar la implementación de todas las funciones.
 
-Consideraciones para la implementación:
-
-1. delayInit debe cargar el valor de duración del retardo en la estructura, en el campo correspondiente. No debe iniciar el conteo del retardo. Debe inicializar el flag running en `false´.
-
-2. delayRead debe verificar el estado del flag running.
-
-* false, tomar marca de tiempo y cambiar running a ‘true’ 
-
-* true, hacer la cuenta para saber si el tiempo del retardo se cumplió o no:
-
-‘marca de tiempo actual - marca de tiempo inicial es mayor o igual a duración del retardo’? 
-
-* devolver un valor booleano que indique si el tiempo se cumplió o no.
-
-* Cuando el tiempo se cumple se debe cambiar el flag running a false.
-
-3. delayWrite debe permitir cambiar el tiempo de duración de un delay existente
-
-NOTA: para obtener una marca de tiempo se puede usar la función HAL_GetTick() que devuelve un valor que se incrementa cada 1 ms y que se puede usar como base de tiempo.
+* **NOTA:** cuando se agregar carpetas a un proyecto de eclipse se deben incluir en el include path para que se incluya su contenido en la compilación.  Se debe hacer clic derecho sobre la carpeta con los archivos de encabezamiento y seleccionar la opción add/remove include path.
 
 
 ### Punto 2:
 
-Sobre el código desarrollado para el punto 1 y sobre el mismo proyecto, implementar un programa que utilice retardos no bloqueantes y  haga parpadear el leds de la placa de desarrollo: 100 ms encendido, 100 ms apagado, en forma periódica.
+Implementar un programa que utilice retardos no bloqueantes y haga titilar en forma periódica un led de la placa NUCLEO-F4xx de acuerdo a una secuencia predeterminada:
+
+const uint32_t TIEMPOS[] = {500, 100, 100, 1000};
+
+Utilizar la función delayWrite y una única variable tipo delay_t para cambiar el tiempo de encendido del led.
+
+* **NOTA:** los tiempos indicados son de encendido y el led debe trabajar con duty = 50%
 
 
 ### Punto 3 [opcional]:
 
-Sobre el código desarrollado para el punto 2 y sobre el mismo proyecto, implementar un programa que haga parpadear el led de la placa de desarrollo en forma periódica con el siguiente patrón:
+Implementar la siguiente función auxiliar pública en API_delay.c
 
-5 veces con período 1 segundo y ciclo de trabajo 50%.
+bool_t delayIsRunning(delay_t * delay);
 
-5 veces con período 200 ms y ciclo de trabajo 50%.
+Esta función debe devolver una copia del valor del campo running de la estructura delay_t
 
-5 veces con período 100 ms y ciclo de trabajo 50%. 
-
-Utilizar un vector o arreglo para definir el patrón y cambiar los tiempos de parpadeo.
+Utilizar esta función en el código implementado para el punto dos para verificar que el delay no esté corriendo antes de cambiar su valor con delayWrite.
 
 
 Para pensar luego de resolver el ejercicio:
 
-* **¿Se pueden cambiar los tiempos de encendido de cada led fácilmente en un solo lugar del código o éstos están hardcodeados?**
-
-En el código proporcionado, los tiempos de encendido/apagado están "hardcodeados" directamente en el main() donde se inicializa el retardo, es decir, estos valores están incrustados en el código fuente.
-Para hacer el código más sencillo, podría definirse los tiempos de encendido/apagado como constantes. 
-
-* **¿Qué bibliotecas estándar se debieron agregar para que el código compile? Si las funcionalidades crecieran, habría que pensar cuál sería el mejor lugar para incluir esas bibliotecas y algunos typedefs que se usan en el ejercicio.**
-
-Las bibliotecas estándar necesarias son:
-                                         <stdint.h> para uint32_t
-                                         <stdbool.h> para bool
-
-* **¿Es adecuado el control de los parámetros pasados por el usuario que se hace en las funciones implementadas? ¿Se controla que sean valores válidos? ¿Se controla que estén dentro de los rangos correctos?**
-
-En el código, una forma de controlar que los valores sean válidos sería usando un condicional para verificar los parámetros, y gestionar un error en casos de NULL o 0.
-
-* **¿Cuán reutilizable es el código implementado?**
-
-El código podría mejorar, por ejemplo, evitando el hardcoding. 
+* **¿Es suficientemente clara la consigna 2 o da lugar a implementaciones con distinto comportamiento?**
 
 
-* **¿Cuán sencillo resulta en su implementación cambiar el patrón de tiempos de parpadeo?**
+* **¿Se puede cambiar el tiempo de encendido del led fácilmente en un solo lugar del código o éste está hardcodeado? ¿Hay números “mágicos” en el código?**
 
-Hacerlo es sencillo, pero debe tenerse en cuenta la línea en donde tal patrón está siendo invocado. Esto podría mejorarse usando constantes para el tiempo de encendido y apagado.
+* **¿Qué bibliotecas estándar se debieron agregar a API_delay.h para que el código compile? Si las funcionalidades de una API propia crecieran, habría que pensar cuál sería el mejor lugar para incluir esas bibliotecas y algunos typedefs que se usen en la implementación, ¿Cuál sería el mejor lugar?**
+
+* **¿Es adecuado el control de los parámetros pasados por el usuario que se hace en las funciones implementadas? ¿Se controla que sean valores válidos? ¿Se controla que estén dentro de los rangos esperados?**
 
