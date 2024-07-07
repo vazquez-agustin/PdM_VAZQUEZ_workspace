@@ -39,19 +39,27 @@ int main(void)
   /* Infinite loop */
   while (1)
   {
+	  // Verifica si el retardo no bloqueante no está corriendo
 	  if (!delayIsRunning(&ledDelay)) {
 
+	      // Cambia el estado del LED: lo enciende si está apagado y lo apaga si está encendido
 		  HAL_GPIO_WritePin(LED_GPIO_PORT, LED_PIN, ledState ? GPIO_PIN_SET : GPIO_PIN_RESET);
-	      ledState = !ledState;
+		  // Alterna el estado del LED
+		  ledState = !ledState;
 
+		  // Calcula el siguiente paso en la secuencia de tiempos
 	      currentStep = (currentStep + 1) % (sizeof(TIEMPOS) / sizeof(TIEMPOS[0]));
+	      // Actualiza la duración del retardo con el próximo tiempo en la secuencia
 	      delayWrite(&ledDelay, TIEMPOS[currentStep]);
 
+	      // Reinicia el retardo con la nueva duración
 	      delayInit(&ledDelay, TIEMPOS[currentStep]);
 
       }
 
-	      delayRead(&ledDelay);
+	  // Lee el estado del retardo para saber si ha expirado o no
+	  delayRead(&ledDelay);
+
   }
 
 }
