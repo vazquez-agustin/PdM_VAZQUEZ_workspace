@@ -3,32 +3,9 @@
 #include "main.h"
 #include "gpio.h"
 #include "stm32f4xx_hal.h"
+#include "API_delay.h"
 
-// Implementación de las funciones de retardo no bloqueante
-void delayInit(delay_t *delay, tick_t duration) {
-    delay->duration = duration;
-    delay->running = false;
-}
 
-bool_t delayRead(delay_t *delay) {
-    if (!delay->running) {
-        delay->startTime = HAL_GetTick();
-        delay->running = true;
-        return false;
-    } else {
-        tick_t currentTime = HAL_GetTick();
-        if (currentTime - delay->startTime >= delay->duration) {
-            delay->running = false;
-            return true;
-        } else {
-            return false;
-        }
-    }
-}
-
-void delayWrite(delay_t *delay, tick_t duration) {
-    delay->duration = duration;
-}
 
 
 /* Private define ------------------------------------------------------------*/
@@ -37,6 +14,8 @@ void delayWrite(delay_t *delay, tick_t duration) {
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+
+const uint32_t TIEMPOS[] = {500, 100, 100, 1000};
 
 
 int main(void)
@@ -51,26 +30,32 @@ int main(void)
 
 
   delay_t ledDelay;
-  delayInit(&ledDelay, 100);
+  uint8_t currentStep = 0;
 
-  // Estado del LED
+  delayInit(&ledDelay, TIEMPOS[currentStep]);
+
   bool_t ledState = false;
 
   /* Infinite loop */
   while (1)
   {
-	  // Verifica si el retardo ha terminado
-	  if (delayRead(&ledDelay)) {
-		  // Cambia el estado del LED
-	      ledState = !ledState;
-	      HAL_GPIO_WritePin(LED_GPIO_PORT, LED_PIN, ledState ? GPIO_PIN_SET : GPIO_PIN_RESET);
+	  if (!delayIsRunning(&ledDelay)) {
 
-	      // Reinicia el retardo
-	      delayInit(&ledDelay, 100);
+		  HAL_GPIO_WritePin(LED_GPIO_PORT, LED_PIN, ledState ? GPIO_PIN_SET : GPIO_PIN_RESET);
+	      ledState = !ledState;
+
+	      currentStep = (currentStep + 1) % (sizeof(TIEMPOS) / sizeof(TIEMPOS[0]));
+	      delayWrite(&ledDelay, TIEMPOS[currentStep]);
+
+	      delayInit(&ledDelay, TIEMPOS[currentStep]);
+
       }
+
+	      delayRead(&ledDelay);
   }
-  /* USER CODE END 3 */
+
 }
+
 
 void SystemClock_Config(void)
 {

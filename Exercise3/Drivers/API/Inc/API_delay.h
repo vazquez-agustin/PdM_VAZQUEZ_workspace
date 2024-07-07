@@ -1,4 +1,3 @@
-
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
@@ -29,6 +28,7 @@ void Error_Handler(void);
 /*
  * Inicializa la estructura delay_t con la duración especificada, configurando running a
  * false inicialmente.
+ *
  * */
 void delayInit(delay_t *delay, tick_t duration);
 
@@ -36,14 +36,30 @@ void delayInit(delay_t *delay, tick_t duration);
  * Verifica el estado del retardo. Si running es false, inicia el retardo y retorna false.
  * Si running es true, verifica si ha transcurrido la duración del retardo desde startTime y
  * retorna true si se ha cumplido el tiempo, reiniciando running a false en ese caso.
+ *
  * */
 bool_t delayRead(delay_t *delay);
 
 /*
  * Permite cambiar la duración de un retardo existente actualizando el campo duration en la
  * estructura delay_t.
+ *
  * */
 void delayWrite(delay_t *delay, tick_t duration);
+
+/*
+ * PUNTO 3
+ *
+ * Esta función devuelve el estado del campo `running` de la estructura `delay_t`,
+ * indicando si el retardo no bloqueante está en curso o no.
+ * Es útil para comprobar si se puede cambiar la duración del retardo sin
+ * interferir con un retardo en curso.
+ *
+ * @param delay Puntero a la estructura `delay_t` que representa el retardo.
+ * @return `true` si el retardo está corriendo, `false` si no lo está.
+ *
+ * */
+bool_t delayIsRunning(delay_t *delay);
 
 
 #ifdef __cplusplus

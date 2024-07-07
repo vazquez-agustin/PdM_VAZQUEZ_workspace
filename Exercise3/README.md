@@ -60,7 +60,7 @@ Utilizar la función delayWrite y una única variable tipo delay_t para cambiar 
 * **NOTA:** los tiempos indicados son de encendido y el led debe trabajar con duty = 50%
 
 
-### Punto 3 [opcional]:
+### Punto 3:
 
 Implementar la siguiente función auxiliar pública en API_delay.c
 
