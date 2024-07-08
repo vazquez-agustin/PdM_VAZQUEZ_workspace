@@ -1,10 +1,10 @@
-13:47:21 **** Build of configuration Debug for project Ejercicio_delayNB_1 ****
-make -j4 all 
-arm-none-eabi-size   Ejercicio_delayNB_1.elf 
+16:56:14 **** Build of configuration Debug for project Ejercicio_delayNB_1 ****
+make -j8 all 
+arm-none-eabi-size  Ejercicio_delayNB_1.elf 
    text	   data	    bss	    dec	    hex	filename
-   6316	     32	   1568	   7916	   1eec	Ejercicio_delayNB_1.elf
+   6392	     32	   1568	   7992	   1f38	Ejercicio_delayNB_1.elf
 Finished building: default.size.stdout
  
 
-13:47:22 Build Finished. 0 errors, 0 warnings. (took 758ms)
+16:56:15 Build Finished. 0 errors, 0 warnings. (took 438ms)
 

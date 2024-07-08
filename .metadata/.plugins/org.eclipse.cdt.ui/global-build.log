@@ -1,28 +1,32 @@
-20:01:55 **** Incremental Build of configuration Debug for project Exercise2 ****
+20:34:52 **** Incremental Build of configuration Debug for project Exercise3 ****
 make -j8 all 
-arm-none-eabi-size  Exercise2.elf 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/Exercise3/Drivers/API/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:46:16: warning: implicit declaration of function 'delayIsRunning' [-Wimplicit-function-declaration]
+   46 |           if (!delayIsRunning(&ledDelay)) {
+      |                ^~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Exercise3.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/Exercise3/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Exercise3.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Exercise3.elf
+ 
+arm-none-eabi-size  Exercise3.elf 
+arm-none-eabi-objdump -h -S Exercise3.elf  > "Exercise3.list"
    text	   data	    bss	    dec	    hex	filename
-   5932	     12	   1572	   7516	   1d5c	Exercise2.elf
+   6092	     12	   1572	   7676	   1dfc	Exercise3.elf
 Finished building: default.size.stdout
  
-20:02:21 **** Incremental Build of configuration Debug for project Exercise2 ****
+Finished building: Exercise3.list
+ 
+20:35:20 **** Incremental Build of configuration Debug for project Exercise3 ****
 make -j8 all 
-arm-none-eabi-size  Exercise2.elf 
+arm-none-eabi-size  Exercise3.elf 
    text	   data	    bss	    dec	    hex	filename
-   5932	     12	   1572	   7516	   1d5c	Exercise2.elf
+   6092	     12	   1572	   7676	   1dfc	Exercise3.elf
 Finished building: default.size.stdout
  
-20:02:44 **** Incremental Build of configuration Debug for project Exercise2 ****
+20:35:51 **** Incremental Build of configuration Debug for project Exercise3 ****
 make -j8 all 
-arm-none-eabi-size  Exercise2.elf 
+arm-none-eabi-size  Exercise3.elf 
    text	   data	    bss	    dec	    hex	filename
-   5932	     12	   1572	   7516	   1d5c	Exercise2.elf
-Finished building: default.size.stdout
- 
-20:02:48 **** Incremental Build of configuration Debug for project Exercise2 ****
-make -j8 all 
-arm-none-eabi-size  Exercise2.elf 
-   text	   data	    bss	    dec	    hex	filename
-   5932	     12	   1572	   7516	   1d5c	Exercise2.elf
+   6092	     12	   1572	   7676	   1dfc	Exercise3.elf
 Finished building: default.size.stdout
  

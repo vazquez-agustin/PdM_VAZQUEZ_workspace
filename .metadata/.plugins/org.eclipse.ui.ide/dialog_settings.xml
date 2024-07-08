@@ -7,6 +7,10 @@
 		<item key="WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID" value="false"/>
 		<item key="WizardProjectsImportPage.STORE_HIDE_CONFLICTING_PROJECTS_ID" value="false"/>
 		<list key="WizardProjectsImportPage.STORE_DIRECTORIES">
+			<item value="/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/practica2"/>
+			<item value="/home/ubuntu/Desktop/Folder/PdM_workspace/practica2"/>
+			<item value="/home/ubuntu/Desktop/Folder/PdM_workspace"/>
+			<item value="/home/ubuntu/Desktop/PdM_workspace/Practica_2"/>
 			<item value="/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace"/>
 		</list>
 		<list key="WizardProjectsImportPage.STORE_ARCHIVES">
@@ -28,5 +32,12 @@
 		<item key="SmartImportRootWizardPage.STORE_CLOSE_IMPORTED" value="false"/>
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
+		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="/home/ubuntu/Desktop/New Folder/PdM_workspace/Practica_02.02"/>
+			<item value="/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/practica2"/>
+			<item value="/home/ubuntu/Desktop/Folder/PdM_workspace"/>
+			<item value="/home/ubuntu/Desktop/Folder/PdM_workspace/practica2"/>
+			<item value="/home/ubuntu/Desktop/PdM_workspace/Practica_2"/>
+		</list>
 	</section>
 </section>

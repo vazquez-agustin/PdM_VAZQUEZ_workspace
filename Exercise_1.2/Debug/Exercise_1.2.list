@@ -681,9 +681,10 @@ void SystemClock_Config(void)
  80006f4:	40007000 	.word	0x40007000
 
 080006f8 <ReadButton>:
-
-
-/* Read Button with Debounce -------------------------------------------------*/
+ * lo que ayuda a evitar lecturas erráticas debido a fluctuaciones
+ * temporales en el estado del botón.
+ *
+ * */
 uint8_t ReadButton(void)
 {
  80006f8:	b580      	push	{r7, lr}
@@ -772,8 +773,7 @@ __STATIC_FORCEINLINE void __disable_irq(void)
  8000768:	b672      	cpsid	i
 }
  800076a:	bf00      	nop
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+
   __disable_irq();
   while (1)
  800076c:	bf00      	nop
