@@ -5,17 +5,20 @@
 #include "stm32f4xx_hal.h"
 #include "API_delay.h"
 
-
-
-
 /* Private define ------------------------------------------------------------*/
 #define LED_PIN GPIO_PIN_0
 #define LED_GPIO_PORT GPIOB
 
+// Variables de tiempo
+const uint32_t TIEMPO1 = 500;
+const uint32_t TIEMPO2 = 100;
+const uint32_t TIEMPO3 = 100;
+const uint32_t TIEMPO4 = 1000;
+
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 
-const uint32_t TIEMPOS[] = {500, 100, 100, 1000};
+const uint32_t TIEMPOS[] = {TIEMPO1, TIEMPO2, TIEMPO3, TIEMPO4};
 
 
 int main(void)

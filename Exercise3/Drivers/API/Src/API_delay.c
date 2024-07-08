@@ -14,8 +14,11 @@
  * @param duration Duración del retardo en milisegundos.
  */
 void delayInit(delay_t *delay, tick_t duration) {
+
+	if (delay == NULL) return false;
     delay->duration = duration;
     delay->running = false;
+
 }
 
 /**
@@ -30,6 +33,8 @@ void delayInit(delay_t *delay, tick_t duration) {
  * @return `true` si el retardo ha expirado, `false` si aún está en curso.
  */
 bool_t delayRead(delay_t *delay) {
+
+	if (delay == NULL) return false;
 
     if (!delay->running) {
 
@@ -63,7 +68,10 @@ bool_t delayRead(delay_t *delay) {
  * @param duration Nueva duración del retardo en milisegundos.
  */
 void delayWrite(delay_t *delay, tick_t duration) {
+
+	if (delay == NULL) return false;
     delay->duration = duration;
+
 }
 
 /**
@@ -80,5 +88,8 @@ void delayWrite(delay_t *delay, tick_t duration) {
  *
  */
 bool_t delayIsRunning(delay_t *delay) {
+
+	if (delay == NULL) return false;
     return delay->running;
+
 }
