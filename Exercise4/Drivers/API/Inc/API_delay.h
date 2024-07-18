@@ -1,4 +1,4 @@
-/* Define to prevent recursive inclusion -------------------------------------*/
+
 #ifndef __MAIN_H
 #define __MAIN_H
 
@@ -66,4 +66,4 @@ bool_t delayIsRunning(delay_t *delay);
 }
 #endif
 
-#endif /* __MAIN_H */
+#endif /* API_INC_API_DELAY_H_ */

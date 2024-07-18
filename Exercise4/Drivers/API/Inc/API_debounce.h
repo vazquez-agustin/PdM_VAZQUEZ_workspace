@@ -1,29 +1,18 @@
-/*
- * API_debounce.h
- *
- *  Created on: Jul 12, 2024
- *      Author: ubuntu
- */
 
 #ifndef API_INC_API_DEBOUNCE_H_
 #define API_INC_API_DEBOUNCE_H_
 
-typedef enum{
+#include <stdbool.h>
 
-BUTTON_UP,  // Estado: inicial (no presionado)
-BUTTON_FALLING,  // Estado: siendo presionado
-BUTTON_DOWN, // Estado: totalmente presionado
-BUTTON_RAISING, // Estado: se suelta el botón
-
-} debounceState_t;
+typedef bool bool_t;
 
 
-void debounceFSM_init();
+void debounceFSM_init(void);
 
-void debounceFSM_update();
+void debounceFSM_update(void);
 
+void writeKey(void);
 
-debounceState_t estadoActual;
-
+bool_t readKey();
 
 #endif /* API_INC_API_DEBOUNCE_H_ */

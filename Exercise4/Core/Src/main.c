@@ -3,23 +3,17 @@
 #include "main.h"
 #include "gpio.h"
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx_nucleo_144.h"
 #include "API_delay.h"
-//#include "API_debounce.h"
+#include "API_debounce.h"
 
 /* Private define ------------------------------------------------------------*/
 #define LED_PIN GPIO_PIN_0
 #define LED_GPIO_PORT GPIOB
-
-// Variables de tiempo
-const uint32_t TIEMPO1 = 500;
-const uint32_t TIEMPO2 = 100;
-const uint32_t TIEMPO3 = 100;
-const uint32_t TIEMPO4 = 1000;
+static delay_t delay;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
-const uint32_t TIEMPOS[] = {TIEMPO1, TIEMPO2, TIEMPO3, TIEMPO4};
 
 
 int main(void)
@@ -32,8 +26,34 @@ int main(void)
 
   MX_GPIO_Init();
 
+  // Inicializo la FSM
+  debounceFSM_init();
 
-  //debounceFSM_init();
+  BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
+  delayInit(&delay, 40);
+
+  while (1) {
+
+	  if (delayRead(&delay)) {
+
+		  if (BSP_PB_GetState(BUTTON_USER) == true) {
+
+			  writeKey();
+
+		  }
+
+
+	  }
+
+
+  }
+
+
+
+
+
+
 
 
 	  /*
