@@ -11,6 +11,7 @@
 #define LED_PIN GPIO_PIN_0
 #define LED_GPIO_PORT GPIOB
 static delay_t delay;
+static delay_t delayLED;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
@@ -29,13 +30,32 @@ int main(void)
   // Inicializo la FSM
   debounceFSM_init();
 
+  // Delay del antirebote
+  delayInit(&delay, 40);
+
+  // Frecuencias
+
+  const uint32_t TIEMPOS[] = {100, 500};
+
+  uint32_t index = 0;
+
+  // Delay del LED2
+  delayInit(&delayLED, TIEMPOS[0]);
+
+
+
+  // Periféricos
   BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 
-  delayInit(&delay, 40);
+  BSP_LED_Init(LED1);
+
+  BSP_LED_Init(LED2);
 
   while (1) {
 
 	  if (delayRead(&delay)) {
+
+		  // Lógica antirebote
 
 		  if (BSP_PB_GetState(BUTTON_USER) == true) {
 
@@ -43,6 +63,36 @@ int main(void)
 
 		  }
 
+		  debounceFSM_update();
+
+	  }
+
+	  if (delayRead(&delay)) {
+
+		  // Punto 4.1
+		  if (isButtonDown()) {
+
+			  BSP_LED_On(LED1);
+
+		  } else {
+
+			  BSP_LED_Off(LED1);
+
+		  }
+
+
+	   }
+
+	  if (delayRead(&delayLED)) {
+
+		  BSP_LED_Toggle(LED2);
+
+	  }
+
+	  if (isButtonDown()) {
+
+		  delayWrite(&delayLED, TIEMPOS[index]);
+		  index = (index + 1) % (sizeof(TIEMPOS) / sizeof(TIEMPOS[0]));
 
 	  }
 

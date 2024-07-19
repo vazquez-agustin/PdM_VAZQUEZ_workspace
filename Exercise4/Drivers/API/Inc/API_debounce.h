@@ -15,4 +15,6 @@ void writeKey(void);
 
 bool_t readKey();
 
+bool_t isButtonDown();
+
 #endif /* API_INC_API_DEBOUNCE_H_ */
