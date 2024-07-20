@@ -3,7 +3,6 @@
 
 /* Function Prototypes -------------------------------------------------------*/
 void SystemClock_Config(void);  // Configuración del reloj del sistema
-static void MX_GPIO_Init(void); // Inicialización de los pines GPIO
 
 /* Main Program --------------------------------------------------------------*/
 int main(void)
@@ -11,27 +10,30 @@ int main(void)
 
   HAL_Init(); // Inicializa la biblioteca HAL (Hardware Abstraction Layer)
   SystemClock_Config(); // Configura el reloj del sistema
-  MX_GPIO_Init(); // Inicializa los pines GPIO
+
+  /* Initialize BSP Led for LED1, 2 & 3 */
+  BSP_LED_Init(LED1);
+  BSP_LED_Init(LED2);
+  BSP_LED_Init(LED3);
 
   /* Infinite loop */
   while (1)
   {
-    // Enciende LED durante 200ms
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET); // PIN_SET: Enciende LED1 (PB0)
-    HAL_Delay(200); // Esperar 200 ms
-    //Apaga todos los LEDs durante 200ms
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET); // PIN_RESET: Apaga LED1 (PB0)
-    HAL_Delay(200); // Esperar 200 ms
 
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_SET); // PIN_SET: Enciende LED2 (PB7)
-    HAL_Delay(200);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_7, GPIO_PIN_RESET); // PIN_RESET: Apaga LED2 (PB7)
-    HAL_Delay(200);
+	BSP_LED_On(LED1);
+	HAL_Delay(200);
+	BSP_LED_Off(LED1);
 
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET); // PIN_SET: Enciende LED3 (PB14)
-    HAL_Delay(200);
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET); // PIN_RESET: Apaga LED3 (PB14)
-    HAL_Delay(200);
+	BSP_LED_On(LED2);
+	HAL_Delay(200);
+	BSP_LED_Off(LED2);
+
+	BSP_LED_On(LED3);
+	HAL_Delay(200);
+	BSP_LED_Off(LED3);
+
+	HAL_Delay(200);
+
   }
 }
 
@@ -66,36 +68,7 @@ void SystemClock_Config(void)
   }
 }
 
-/* Inicialización de los Pines GPIO ------------------------------------------*/
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef GPIO_InitStruct = {0}; // Estructura para la configuración de GPIO
 
-  __HAL_RCC_GPIOB_CLK_ENABLE(); // Habilita el reloj para el puerto GPIOB
-
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0 | GPIO_PIN_7 | GPIO_PIN_14, GPIO_PIN_RESET); // Configura el nivel de los pines (bajo)
-
-  GPIO_InitStruct.Pin = GPIO_PIN_0 | GPIO_PIN_7 | GPIO_PIN_14; // Configura los pines PB0, PB7 y PB14
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP; // Configura los pines como salida push-pull
-  /*
-   *
-   *
-   * Un pin en "push-pull" tiene 2 estados:
-   *
-   *
-   * Estado Alto (GPIO_PIN_SET): El pin se establece en un nivel de voltaje alto (generalmente igual
-   * al voltaje de alimentación del microcontrolador).
-   *
-   *
-   * Estado Bajo (GPIO_PIN_RESET): El pin se establece en un nivel de voltaje bajo (generalmente
-   * cercano a 0 voltios).
-   *
-   *
-   * */
-  GPIO_InitStruct.Pull = GPIO_NOPULL; // Sin resistencias pull-up o pull-down
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW; // Velocidad baja
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct); // Inicializa los pines GPIOB con la configuración especificada
-}
 
 /* Manejo de Errores ---------------------------------------------------------*/
 void Error_Handler(void)
