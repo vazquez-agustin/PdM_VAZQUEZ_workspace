@@ -1,20 +1,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "gpio.h"
-#include "stm32f4xx_hal.h"
 
 /* Private define ------------------------------------------------------------*/
-#define LED1_PIN GPIO_PIN_0
-#define LED2_PIN GPIO_PIN_7
-#define LED3_PIN GPIO_PIN_14
-#define LED_PORT GPIOB
-
-#define BUTTON_PIN GPIO_PIN_13
-#define BUTTON_PORT GPIOC
+#define TIMEoN 200;
+#define TIMEoFF 200;
 
 /* Private variables ---------------------------------------------------------*/
-uint16_t led_pins_seq1[] = {LED1_PIN, LED2_PIN, LED3_PIN};
-uint16_t led_pins_seq2[] = {LED1_PIN, LED3_PIN, LED2_PIN};
+uint16_t led_pins_seq1[] = {LED1, LED2, LED3};
+uint16_t led_pins_seq2[] = {LED3, LED2, LED1};
 
 uint8_t num_leds = sizeof(led_pins_seq1) / sizeof(led_pins_seq1[0]);
 
@@ -22,19 +16,31 @@ uint8_t current_led = 0; // Índice del LED actual
 uint8_t sequence = 0; // Secuencia actual: 0 - Secuencia alterna: 1
 
 /* Function Prototypes -------------------------------------------------------*/
+
+void blinkSequence (Led_TypeDef led, uint32_t timeOn, uint32_t timeOff);
+
+
 void SystemClock_Config(void);
-void MX_GPIO_Init(void);
+
 uint8_t ReadButton(void);
 
 /* Main Program --------------------------------------------------------------*/
-int main(void)
-{
+int main(void) {
+
   HAL_Init();
   SystemClock_Config();
-  MX_GPIO_Init();
+
+  /* Initialize BSP Led for LED1, 2 & 3 as well as the user button*/
+  void peripheralsInit();
 
   while (1)
   {
+
+
+
+  }
+
+	  /*
     if (ReadButton())
     {
       sequence = !sequence; // Alternar secuencia
@@ -60,7 +66,8 @@ int main(void)
 
     current_led = (current_led + 1) % num_leds; // Mover al siguiente LED
   }
-}
+
+  */
 
 
 void SystemClock_Config(void)
@@ -100,42 +107,40 @@ void SystemClock_Config(void)
   }
 }
 
+// Funciones para simplificar el código en MAIN
+void peripheralsInit() {
 
-/* Read Button with Debounce -------------------------------------------------*/
+	/* Initialize BSP Led for LED2 */
+	BSP_LED_Init(LED1);
+	BSP_LED_Init(LED2);
+	BSP_LED_Init(LED3);
 
-/*
- *
- * Esta función asegura que solo se reconozcan cambios de estado
- * del botón como pulsaciones válidas después de que haya pasado
- * un tiempo mínimo (debounceDelay) desde el último cambio detectado,
- * lo que ayuda a evitar lecturas erráticas debido a fluctuaciones
- * temporales en el estado del botón.
- *
- * */
-uint8_t ReadButton(void)
-{
-  static uint8_t lastButtonState = GPIO_PIN_RESET;
-  static uint32_t lastDebounceTime = 0;
-  uint32_t debounceDelay = 50;
+	/* Initialize BSP PB for BUTTON_USER */
+	BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
 
-  uint8_t currentState = HAL_GPIO_ReadPin(BUTTON_PORT, BUTTON_PIN);
+}
 
-  if (currentState != lastButtonState)
-  {
-    lastDebounceTime = HAL_GetTick();
-  }
+void blinkSequence(Led_TypeDef led, uint32_t timeOn, uint32_t timeOff) {
 
-  if ((HAL_GetTick() - lastDebounceTime) > debounceDelay)
-  {
-    if (currentState == GPIO_PIN_SET)
-    {
-      lastButtonState = currentState;
-      return 1;
-    }
-  }
+	BSP_LED_Init(led);
+	HAL_Delay(timeOn);
+	BSP_LED_Off(led);
+	HAL_Delay(timeOff);
 
-  lastButtonState = currentState;
-  return 0;
+}
+
+void changeSequence(void) {
+
+	if (BSP_PB_GetState(BUTTON_USER)) {
+
+		return led_pins_seq1;
+
+	} else {
+
+		return led_pins_seq2;
+
+	}
+
 }
 
 void Error_Handler(void)

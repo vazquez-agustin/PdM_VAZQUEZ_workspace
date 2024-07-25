@@ -1,0 +1,56 @@
+
+#include "API_debounce.h"
+
+  debounceState_t estadoActual;
+
+
+  void debounceFSM_init(void){
+
+  	 estadoActual = BUTTON_UP;
+
+  }
+
+  bool_t readKey() {
+
+	  if (button_pressed) {
+
+		  button_pressed = false;
+
+	  }
+
+	  return ;
+
+  }
+
+  void debounceFSM_update(void) {
+
+  	  switch(estadoActual) {
+
+  	  case BUTTON_UP:
+
+  		  estadoActual = BUTTON_FALLING;
+  		  break;
+
+  	  case BUTTON_FALLING:
+
+
+  		  break;
+
+  	  case BUTTON_RAISING:
+
+  		  break;
+
+  	  case BUTTON_DOWN:
+
+  		  break;
+
+  	  default:
+
+
+  	  }
+
+    }
+
+
+
+

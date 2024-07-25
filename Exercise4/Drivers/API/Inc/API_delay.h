@@ -1,6 +1,13 @@
+/*
+ * API_delay.h
+ *
+ *  Created on: Jul 4, 2024
+ *      Author: Laura Moreno
+ */
 
-#ifndef __MAIN_H
-#define __MAIN_H
+/* Define to prevent recursive inclusion -------------------------------------*/
+#ifndef API_API_DELAY_H_
+#define API_API_DELAY_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -8,7 +15,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
-
 #include <stdint.h>  // Necesario para uint32_t
 #include <stdbool.h> // Necesario para bool
 
@@ -48,7 +54,6 @@ bool_t delayRead(delay_t *delay);
 void delayWrite(delay_t *delay, tick_t duration);
 
 /*
- * PUNTO 3
  *
  * Esta función devuelve el estado del campo `running` de la estructura `delay_t`,
  * indicando si el retardo no bloqueante está en curso o no.
@@ -66,4 +71,4 @@ bool_t delayIsRunning(delay_t *delay);
 }
 #endif
 
-#endif /* API_INC_API_DELAY_H_ */
+#endif /* API_API_DELAY_H_ */

@@ -1,5 +1,4 @@
-../Drivers/API/Src/API_debounce.c:20:8:isButtonDown	2
-../Drivers/API/Src/API_debounce.c:34:6:debounceFSM_init	1
-../Drivers/API/Src/API_debounce.c:40:6:writeKey	1
-../Drivers/API/Src/API_debounce.c:46:8:readKey	2
-../Drivers/API/Src/API_debounce.c:60:8:debounceFSM_update	7
+../Drivers/API/Src/API_debounce.c:28:6:debounceFSM_init	1
+../Drivers/API/Src/API_debounce.c:36:8:debounceFSM_isButtonDown	1
+../Drivers/API/Src/API_debounce.c:43:8:debounceFSM_readKey	2
+../Drivers/API/Src/API_debounce.c:56:6:debounceFSM_update	9

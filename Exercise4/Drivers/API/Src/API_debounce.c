@@ -1,7 +1,14 @@
+/*
+ * API_debounce.c
+ *
+ *  Created on: Jul 18, 2024
+ *      Author: laura
+ */
 
+/* Includes ------------------------------------------------------------------*/
 #include "API_debounce.h"
 
-// Enum privado
+/* Private variables ---------------------------------------------------------*/
 typedef enum{
 
 BUTTON_UP,  // Estado: inicial (no presionado)
@@ -12,43 +19,32 @@ BUTTON_RAISING, // Estado: se suelta el botón
 } debounceState_t;
 
 // Variable global privado
-bool_t button_pressed;
+static bool_t button_pressed;
 
 // Variable global privada (con static)
-static debounceState_t estadoActual;
+static debounceState_t currentState;
 
-bool_t isButtonDown() {
-
-	if (estadoActual == BUTTON_DOWN) {
-
-		return true;
-
-	} else {
-
-		return false;
-
-	}
-
-}
-
+/* Private function prototypes --------------------------*/
 void debounceFSM_init(void){
 
-  	 estadoActual = BUTTON_UP;
-
-  }
-
-void writeKey() {
-
-	button_pressed = true;
+	currentState = BUTTON_UP;
+	button_pressed = false;
 
 }
 
-bool_t readKey() {
+
+bool_t debounceFSM_isButtonDown() {
+
+	return (currentState == BUTTON_DOWN);
+
+}
+
+// Esta función devuelve el valor de button_pressed. TRUE significa que button == pressed
+bool_t debounceFSM_readKey() {
 
 	if (button_pressed) {
 
 		button_pressed = false;
-
 		return true;
 
 	}
@@ -57,59 +53,65 @@ bool_t readKey() {
 
 }
 
-  void debounceFSM_update(void) {
+void debounceFSM_update(bool_t button) {
 
-  	  switch(estadoActual) {
+	button_pressed = button;
 
-  	  case BUTTON_UP:
+	switch(currentState) {
 
-  		  estadoActual = BUTTON_FALLING;
-  		  break;
+	case BUTTON_UP:
 
-  	  case BUTTON_FALLING:
+		if (debounceFSM_readKey()) {
 
-  		  if (readKey()) {
+			currentState = BUTTON_FALLING;
 
-  			  estadoActual = BUTTON_DOWN;
+		}
 
-  		  } else {
+		break;
 
-  			  estadoActual = BUTTON_UP;
+	case BUTTON_FALLING:
 
-  		  }
+		if (debounceFSM_readKey()) {
 
-  		  break;
+			currentState = BUTTON_DOWN;
 
-  	  case BUTTON_RAISING:
+		} else {
 
-  		  if (!readKey()) {
+			currentState = BUTTON_UP;
 
-  			  estadoActual = BUTTON_UP;
+		}
 
-  		  } else {
+		break;
 
-  			  estadoActual = BUTTON_DOWN;
+	case BUTTON_DOWN:
 
-  		  }
+		if (!debounceFSM_readKey()) {
 
-  		  break;
+			currentState = BUTTON_RAISING;
 
-  	  case BUTTON_DOWN:
+		}
 
-  		  estadoActual = BUTTON_RAISING;
+		break;
 
-  		  break;
+	case BUTTON_RAISING:
 
-  	  default:
+		if (!debounceFSM_readKey()) {
 
-  		  debounceFSM_init();
+			currentState = BUTTON_UP;
 
-  		  break;
+		} else {
 
-  	  }
+			currentState = BUTTON_DOWN;
+		}
 
-    }
+		break;
 
+	default:
 
+		debounceFSM_init();
 
+		break;
 
+	}
+
+}

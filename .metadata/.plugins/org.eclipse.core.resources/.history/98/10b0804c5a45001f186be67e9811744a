@@ -1,0 +1,56 @@
+
+#include "API_debounce.h"
+
+typedef enum{
+
+BUTTON_UP,  // Estado: inicial (no presionado)
+BUTTON_FALLING,  // Estado: siendo presionado
+BUTTON_DOWN, // Estado: totalmente presionado
+BUTTON_RAISING, // Estado: se suelta el botón
+
+} debounceState_t;
+
+void debounceFSM_init(void){
+
+  	 estadoActual = BUTTON_UP;
+
+  }
+
+
+
+	  return ;
+
+  }
+
+  void debounceFSM_update(void) {
+
+  	  switch(estadoActual) {
+
+  	  case BUTTON_UP:
+
+  		  estadoActual = BUTTON_FALLING;
+  		  break;
+
+  	  case BUTTON_FALLING:
+
+
+  		  break;
+
+  	  case BUTTON_RAISING:
+
+  		  break;
+
+  	  case BUTTON_DOWN:
+
+  		  break;
+
+  	  default:
+
+
+  	  }
+
+    }
+
+
+
+
