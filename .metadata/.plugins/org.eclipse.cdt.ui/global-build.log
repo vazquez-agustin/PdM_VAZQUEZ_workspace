@@ -1,28 +1,13 @@
-22:33:33 **** Incremental Build of configuration Debug for project Practica_4 ****
+22:46:58 **** Build of configuration Debug for project Exercise4 ****
 make -j8 all 
-arm-none-eabi-gcc "../Drivers/API/Src/API_debounce.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I../Drivers/API/Inc -I../Drivers/BSP/STM32F4xx_Nucleo_144 -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/API/Src/API_debounce.d" -MT"Drivers/API/Src/API_debounce.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/Src/API_debounce.o"
-arm-none-eabi-gcc -o "Practica_4.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/Practica_4/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Practica_4.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: Practica_4.elf
+arm-none-eabi-gcc -o "Exercise4.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/Exercise4/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Exercise4.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Exercise4.elf
  
-arm-none-eabi-size  Practica_4.elf 
-arm-none-eabi-objdump -h -S Practica_4.elf  > "Practica_4.list"
+arm-none-eabi-size  Exercise4.elf 
+arm-none-eabi-objdump -h -S Exercise4.elf  > "Exercise4.list"
    text	   data	    bss	    dec	    hex	filename
-   7156	     28	   1572	   8756	   2234	Practica_4.elf
+   7156	     28	   1572	   8756	   2234	Exercise4.elf
 Finished building: default.size.stdout
  
-Finished building: Practica_4.list
- 
-22:33:46 **** Incremental Build of configuration Debug for project Practica_4 ****
-make -j8 all 
-arm-none-eabi-size  Practica_4.elf 
-   text	   data	    bss	    dec	    hex	filename
-   7156	     28	   1572	   8756	   2234	Practica_4.elf
-Finished building: default.size.stdout
- 
-22:34:00 **** Incremental Build of configuration Debug for project Practica_4 ****
-make -j8 all 
-arm-none-eabi-size  Practica_4.elf 
-   text	   data	    bss	    dec	    hex	filename
-   7156	     28	   1572	   8756	   2234	Practica_4.elf
-Finished building: default.size.stdout
+Finished building: Exercise4.list
  
