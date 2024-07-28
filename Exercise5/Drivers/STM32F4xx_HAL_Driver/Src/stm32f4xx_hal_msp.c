@@ -19,6 +19,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "API_uart.h"
 
 /** @addtogroup STM32F4xx_HAL_Examples
   * @{
