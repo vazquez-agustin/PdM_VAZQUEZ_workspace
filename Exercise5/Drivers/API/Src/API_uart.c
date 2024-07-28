@@ -10,18 +10,6 @@ UART_HandleTypeDef UartHandle;
 static void Error_Handler(void);
 
 
-/*
-
-
-uartSendString(uint8_t *pstring) recibe un puntero a un string que se desea enviar por la UART completo
-(hasta el caracter ‘\0’) y debe utilizar la función de la HAL HAL_UART_Transmit(...) para transmitir el string.
-
-
-uartSendStringSize(uint8_t * pstring, uint16_t size) recibe un puntero a un string que se desea enviar
-por la UART y un entero con la cantidad de caracteres que debe enviar. La función debe utilizar
-HAL_UART_Transmit(...) para transmitir el string.
- *
- * */
 /* Public functions ----------------------------------------------------------*/
 
 // Inicializa UART. Devuelve TRUE si es correcto, sino, FALSO
@@ -63,7 +51,7 @@ void uartSendString(uint8_t * pstring) {
 
 	}
 
-	HAL_UART_Transmit(UartHandle, pstring, length, HAL_MAX_DELAY);
+	HAL_UART_Transmit(&UartHandle, pstring, length, HAL_MAX_DELAY);
 
 }
 
@@ -79,19 +67,6 @@ void uartSendStringSize(uint8_t * pstring, uint16_t size) {
 
 }
 
-void uartSendStringSize(uint8_t * pstring, uint16_t size) {
-
-	if (pstring == NULL || size == 0 || size > 1024) { // Verificar límites razonables
-
-		Error_Handler();
-
-	}
-
-
-	HAL_UART_Receive(&UartHandle, pstring, size, HAL_MAX_DELAY);
-
-}
-
 void uartReceiveStringSize(uint8_t * pstring, uint16_t size) {
 
 	if (pstring == NULL || size == 0 || size > 1024) { // Verificar límites razonables
@@ -102,6 +77,12 @@ void uartReceiveStringSize(uint8_t * pstring, uint16_t size) {
 
     HAL_UART_Receive(&UartHandle, pstring, size, HAL_MAX_DELAY);
 
+}
+
+void Error_Handler(void) {
+	while (1)
+	  {
+	  }
 }
 
 
