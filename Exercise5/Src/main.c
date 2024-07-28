@@ -22,14 +22,13 @@
 #include "main.h"
 
 
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+static delay_t ledDelay;
+
 
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
-static void Error_Handler(void);
+void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -55,17 +54,49 @@ int main(void)
   /* Configure the system clock to 180 MHz */
   SystemClock_Config();
 
+  /* Initialize BSP PB for BUTTON_USER */
+  BSP_PB_Init(BUTTON_USER, BUTTON_MODE_GPIO);
+
   /* Initialize BSP Led for LED2 and LED3*/
   BSP_LED_Init(LED2);
   BSP_LED_Init(LED3);
 
+  /*Initialize UART*/
+  uartInit();
+
+  /*Initialize FSM*/
+  debounceFSM_init();
+
+  delayInit(&ledDelay, 100);
+
   /* Infinite loop */
   while (1)
   {
-	  BSP_LED_Toggle(LED3);
-	  HAL_Delay(100);
+	  // Leer el estado actual del botón
+	  debounceFSM_isButtonDown();
+
+	  // Actualizar la FSM de debounce con el estado actual del botón
+	  debounceFSM_update(BSP_PB_GetState(BUTTON_USER));
+
+	  // Verificar flancos ascendentes y descendentes
+	  if (debounceFSM_readKey()) {
+
+		  if (debounceFSM_isButtonDown()) {
+
+			  uartSendString((uint8_t *)"Flanco ascendente detectado\r\n");
+
+		  } else {
+
+	          uartSendString((uint8_t *)"Flanco descendente detectado\r\n");
+
+		  }
+
+	  }
+
   }
+
 }
+
 
 
 /**
@@ -141,7 +172,7 @@ static void SystemClock_Config(void)
   * @param  None
   * @retval None
   */
-static void Error_Handler(void)
+void Error_Handler(void)
 {
   /* Turn LED2 on */
   BSP_LED_On(LED2);
