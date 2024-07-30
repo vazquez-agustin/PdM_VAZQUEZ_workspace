@@ -5,13 +5,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../Drivers/API/displayLCD/Src/API_display.c 
+../Drivers/API/displayLCD/Src/API_display.c \
+../Drivers/API/displayLCD/Src/API_display_HAL.c 
 
 OBJS += \
-./Drivers/API/displayLCD/Src/API_display.o 
+./Drivers/API/displayLCD/Src/API_display.o \
+./Drivers/API/displayLCD/Src/API_display_HAL.o 
 
 C_DEPS += \
-./Drivers/API/displayLCD/Src/API_display.d 
+./Drivers/API/displayLCD/Src/API_display.d \
+./Drivers/API/displayLCD/Src/API_display_HAL.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -21,7 +24,7 @@ Drivers/API/displayLCD/Src/%.o Drivers/API/displayLCD/Src/%.su Drivers/API/displ
 clean: clean-Drivers-2f-API-2f-displayLCD-2f-Src
 
 clean-Drivers-2f-API-2f-displayLCD-2f-Src:
-	-$(RM) ./Drivers/API/displayLCD/Src/API_display.cyclo ./Drivers/API/displayLCD/Src/API_display.d ./Drivers/API/displayLCD/Src/API_display.o ./Drivers/API/displayLCD/Src/API_display.su
+	-$(RM) ./Drivers/API/displayLCD/Src/API_display.cyclo ./Drivers/API/displayLCD/Src/API_display.d ./Drivers/API/displayLCD/Src/API_display.o ./Drivers/API/displayLCD/Src/API_display.su ./Drivers/API/displayLCD/Src/API_display_HAL.cyclo ./Drivers/API/displayLCD/Src/API_display_HAL.d ./Drivers/API/displayLCD/Src/API_display_HAL.o ./Drivers/API/displayLCD/Src/API_display_HAL.su
 
 .PHONY: clean-Drivers-2f-API-2f-displayLCD-2f-Src
 

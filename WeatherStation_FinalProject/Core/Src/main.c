@@ -19,6 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
+#include "API_display.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -92,6 +94,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
+
+  LCD_Init();
+
+  // Imprimir en el LCD
+  LCD_SetCursor(0, 0);
+  LCD_Print("Hello, World!");
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
