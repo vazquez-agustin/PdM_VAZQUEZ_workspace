@@ -1,6 +1,0 @@
-../Drivers/API/displayLCD/Src/API_display.c:37:6:LCD_SendCommand	1
-../Drivers/API/displayLCD/Src/API_display.c:43:6:LCD_SendData	1
-../Drivers/API/displayLCD/Src/API_display.c:49:6:API_display_Init	1
-../Drivers/API/displayLCD/Src/API_display.c:74:6:API_display_Clear	1
-../Drivers/API/displayLCD/Src/API_display.c:82:6:API_display_Set_Cursor	3
-../Drivers/API/displayLCD/Src/API_display.c:104:6:API_display_Print	2

@@ -11,7 +11,6 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include <stdint.h>
-#include "API_display.h"
 
 /* HAL Includes --------------------------------------------------------------*/
 
@@ -19,9 +18,8 @@
 
 /* Function Prototypes -------------------------------------------------------*/
 
+void API_display_HAL_Delay(uint32_t delay);
 
-void API_display_HAL_Delay (uint32_t delay);
-
-void API_display_HAL_I2C_Write (I2C_HandleTypeDef *hi2c, uint8_t address, uint8_t *measures, uint16_t size);
+void API_display_HAL_I2C_Write(uint8_t *data, uint16_t size);
 
 #endif /* API_DISPLAYLCD_INC_API_DISPLAY_HAL_H_ */

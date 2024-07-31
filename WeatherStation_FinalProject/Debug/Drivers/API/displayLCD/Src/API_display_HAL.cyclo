@@ -1,0 +1,2 @@
+../Drivers/API/displayLCD/Src/API_display_HAL.c:23:6:API_display_HAL_Delay	1
+../Drivers/API/displayLCD/Src/API_display_HAL.c:38:6:API_display_HAL_I2C_Write	1

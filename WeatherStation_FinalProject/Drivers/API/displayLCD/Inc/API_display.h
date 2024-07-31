@@ -10,18 +10,15 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "stm32f4xx_hal.h"
-#include "API_display_HAL.h"
+#include <stdint.h>
 
-// Prototipos de funciones
-void API_display_Init(I2C_HandleTypeDef *hi2c);
-void API_display_Clear(I2C_HandleTypeDef *hi2c);
-void API_display_SendCommand(I2C_HandleTypeDef *hi2c, uint8_t command);
-void API_display_SendData (I2C_HandleTypeDef *hi2c, uint8_t data);
-void API_display_Send_String (char *str);
-void API_display_Set_Cursor(I2C_HandleTypeDef *hi2c, uint8_t row, uint8_t col);
-void API_display_Print(I2C_HandleTypeDef *hi2c, const char *str);
+/* Exported functions prototypes ---------------------------------------------*/
 
-
+void API_display_Init(void);
+void API_display_Clear(void);
+void API_display_SendCommand(uint8_t command); //se podría borrar
+void API_display_SendChar(uint8_t charact); //ascii = char
+void API_display_SendString(char *str);
+void API_display_SetCursor(uint8_t row, uint8_t col);
 
 #endif /* API_DISPLAYLCD_INC_API_DISPLAY_H_ */
