@@ -16,8 +16,7 @@
 
 void API_display_Init(void);
 void API_display_Clear(void);
-void API_display_SendCommand(uint8_t command); //se podría borrar
-void API_display_SendChar(uint8_t charact); //ascii = char
+void API_display_SendChar(uint8_t character); //ascii = char
 void API_display_SendString(char *str);
 void API_display_SetCursor(uint8_t row, uint8_t col);
 
