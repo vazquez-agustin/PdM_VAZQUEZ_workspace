@@ -23,6 +23,16 @@ UART_HandleTypeDef huart6;
 
 /* API code ------------------------------------------------------------*/
 
+/**
+ * @brief Inicializa el módulo UART con los parámetros especificados.
+ *
+ * Esta función configura el UART con la instancia USART6 y parámetros específicos
+ * como baud rate, tamaño de palabra, bits de parada, paridad, modo de operación,
+ * control de flujo de hardware y sobremuestreo. Si la inicialización es exitosa,
+ * se envían los detalles de configuración a través de UART.
+ *
+ * @retval true si la inicialización es exitosa, false en caso contrario.
+ */
 bool_t uartInit() {
 	huart6.Instance = USART6;
 	huart6.Init.BaudRate = 115200;
@@ -51,6 +61,14 @@ bool_t uartInit() {
 	return true;
 }
 
+/**
+ * @brief Envía una cadena de caracteres a través de UART.
+ *
+ * Esta función envía una cadena de caracteres completa a través del módulo UART.
+ * Si el puntero de la cadena es NULL, se llama al manejador de errores.
+ *
+ * @param pstring Puntero a la cadena de caracteres a enviar.
+ */
 void uartSendString(uint8_t *pstring) {
 
 	if (NULL == pstring) {
@@ -61,6 +79,15 @@ void uartSendString(uint8_t *pstring) {
 
 }
 
+/**
+ * @brief Envía una cadena de caracteres parcial a través de UART.
+ *
+ * Esta función envía una cantidad específica de caracteres de una cadena a través del módulo UART.
+ * Si el puntero de la cadena es NULL, se llama al manejador de errores.
+ *
+ * @param pstring Puntero a la cadena de caracteres a enviar.
+ * @param size Cantidad de caracteres a enviar.
+ */
 void uartSendStringSize(uint8_t *pstring, uint16_t size) {
 
 	if (NULL != pstring) {
@@ -71,6 +98,15 @@ void uartSendStringSize(uint8_t *pstring, uint16_t size) {
 
 }
 
+/**
+ * @brief Recibe una cadena de caracteres parcial a través de UART.
+ *
+ * Esta función recibe una cantidad específica de caracteres a través del módulo UART y los almacena
+ * en el buffer proporcionado. Si el puntero del buffer es NULL, se llama al manejador de errores.
+ *
+ * @param pstring Puntero al buffer donde se almacenarán los caracteres recibidos.
+ * @param size Cantidad de caracteres a recibir.
+ */
 void uartReceiveStringSize(uint8_t *pstring, uint16_t size) {
 
 	if (NULL != pstring) {
