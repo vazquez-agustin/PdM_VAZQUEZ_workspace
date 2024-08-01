@@ -39,3 +39,14 @@ Se deben verificar los valores de retorno de TODAS las funciones del módulo UAR
 Sobre el ejercicio de la práctica 4, implementar un programa que utilice el módulo de uart implementado por ustedes para informar al usuario cuando se producen los flancos ascendentes y descendentes.
 
 En cada flanco se debe enviar un mensaje por la UART que diga “Flanco ascendente/descendente detectado”, según corresponda.  Cada mensaje se debe escribir en una línea nueva en la terminal de la PC.
+
+### Punto 3 (optativo):
+
+Sobre el mismo proyecto desarrollado para el punto 1 y el punto 2, agregar la siguiente funcionalidad:
+
+Cada vez que se envíe un caracter ‘c’ desde la terminal de la PC, el microcontrolador debe responder con el envío de los parámetros de inicialización de la UART en un formato que sea legible claramente desde la terminal.
+
+Enviar al menos cuatro parámetros de la UART.
+
+* El sistema debe responder adecuadamente a la consulta, no debe perder peticiones ni generar reportes no solicitados, ¿Cuál es la mejor estratégia para lograr esto?
+
