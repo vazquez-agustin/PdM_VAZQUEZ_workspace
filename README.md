@@ -30,3 +30,15 @@ Se crean funciones para generar delays no bloqueantes, para hacer parpadear uno 
 
 Se modularizan las funciones desarrolladas en la **Práctica N°2**, además de crear una función para verificar si el delay está corriendo (delayIsRunning).
 
+# Práctica N°4
+
+* Resolución general: en directorio PdM_VAZQUEZ_workspace/Exercise4
+
+Implementar una maquina de estados finitos con la lógica del antirebote por software.
+
+# Práctica N°5
+
+* Resolución general: en directorio PdM_VAZQUEZ_workspace/Exercise5 
+
+Se implementa comunicación serial por el protocolo UART.
+
