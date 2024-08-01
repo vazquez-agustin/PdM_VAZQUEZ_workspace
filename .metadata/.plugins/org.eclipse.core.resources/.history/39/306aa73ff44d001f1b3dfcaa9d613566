@@ -1,0 +1,22 @@
+/*
+ * API_displayLCD.c
+ *
+ *  Created on: Jul 26, 2024
+ *      Author: ubuntu
+ */
+
+/* Includes ------------------------------------------------------------------*/
+
+#include "API_displayLCD.h"
+
+// Initialize the LCD
+void LCD_Init(void);
+
+// Clear the LCD display
+void LCD_Clear(void);
+
+// Set the cursor position
+void LCD_SetCursor(uint8_t row, uint8_t col);
+
+// Print a string on the LCD
+void LCD_Print(const char *str);

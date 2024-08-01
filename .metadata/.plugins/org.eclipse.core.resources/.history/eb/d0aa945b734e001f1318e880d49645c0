@@ -1,0 +1,36 @@
+/*
+ * API_display_HAL.h
+ *
+ *  Created on: Jul 30, 2024
+ *      Author: ubuntu
+ */
+
+#ifndef API_DISPLAYLCD_INC_API_DISPLAY_HAL_H_
+#define API_DISPLAYLCD_INC_API_DISPLAY_HAL_H_
+
+/* Includes ------------------------------------------------------------------*/
+
+#include <stdint.h>
+#include "API_display.h"
+
+/* HAL Includes --------------------------------------------------------------*/
+#include "stm32f4xx_hal.h"
+
+/* Function Prototypes -------------------------------------------------------*/
+
+void API_display_HAL_Delay (uint32_t delay);
+
+/**
+  * @brief  Transmits in master mode an amount of data in blocking mode.
+  * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
+  *                the configuration information for the specified I2C.
+  * @param  DevAddress Target device address: The device 7 bits address value
+  *         in datasheet must be shifted to the left before calling the interface
+  * @param  pData Pointer to data buffer
+  * @param  Size Amount of data to be sent
+  * @param  Timeout Timeout duration
+  * @retval HAL status
+  */
+void API_display_HAL_I2C_Write ();
+
+#endif /* API_DISPLAYLCD_INC_API_DISPLAY_HAL_H_ */

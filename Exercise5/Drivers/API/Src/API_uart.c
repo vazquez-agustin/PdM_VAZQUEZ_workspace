@@ -1,88 +1,82 @@
+/*
+ * API_uart.c
+ *
+ *  Created on: Aug 1, 2024
+ *      Author: ubuntu
+ */
 
 /* Includes ------------------------------------------------------------------*/
+
 #include "API_uart.h"
+#include "stm32f4xx_hal.h"
+#include <string.h>
 
-/* Private variable ----------------------------------------------------------*/
-/* UART handler declaration */
-UART_HandleTypeDef UartHandle;
+void Error_Handler(void);
 
-/* Private function prototypes -----------------------------------------------*/
-static void Error_Handler(void);
+/* Private define ------------------------------------------------------------*/
 
+#define TIMEOUT 100
 
-/* Public functions ----------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
 
-// Inicializa UART. Devuelve TRUE si es correcto, sino, FALSO
-bool_t uartInit(void)
-{
-  UartHandle.Instance        = USARTx;
+UART_HandleTypeDef huart6;
 
-  UartHandle.Init.BaudRate   = 9600;
-  UartHandle.Init.WordLength = UART_WORDLENGTH_8B;
-  UartHandle.Init.StopBits   = UART_STOPBITS_1;
-  UartHandle.Init.Parity     = UART_PARITY_ODD;
-  UartHandle.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
-  UartHandle.Init.Mode       = UART_MODE_TX_RX;
-  UartHandle.Init.OverSampling = UART_OVERSAMPLING_16;
+/* API code ------------------------------------------------------------*/
 
-  if (HAL_UART_Init(&UartHandle) != HAL_OK)
-
-  {
-
-    /* Initialization Error */
-   Error_Handler();
-   return false;
-
-  }
-
-  uartSendString((uint8_t*)"Welcome: UART initialized with 9600 baud rate, 1 stop bit.\r\n");
-  return true;
-
-}
-
-void uartSendString(uint8_t * pstring) {
-
-	if (pstring == NULL) return;
-
-	uint16_t length = 0;
-	while (pstring[length] != '\0') {
-
-		length++;
-
-	}
-
-	HAL_UART_Transmit(&UartHandle, pstring, length, HAL_MAX_DELAY);
-
-}
-
-void uartSendStringSize(uint8_t * pstring, uint16_t size) {
-
-	if (pstring == NULL || size == 0 || size > 1024) { // Verificar límites razonables
-
+bool_t uartInit() {
+	huart6.Instance = USART6;
+	huart6.Init.BaudRate = 115200;
+	huart6.Init.WordLength = UART_WORDLENGTH_8B;
+	huart6.Init.StopBits = UART_STOPBITS_1;
+	huart6.Init.Parity = UART_PARITY_NONE;
+	huart6.Init.Mode = UART_MODE_TX_RX;
+	huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+	if (HAL_UART_Init(&huart6) != HAL_OK) {
 		Error_Handler();
-
 	}
 
-	HAL_UART_Transmit(&UartHandle, pstring, size, HAL_MAX_DELAY);
+	// TODO convert configurations to strings and avoid hard coded values
+	uartSendString((uint8_t*) "UART configuration: \r\n");
+	uartSendString((uint8_t*) "Instance: USART6\r");
+	uartSendString((uint8_t*) "BaudRate: 115200\r\n");
+	uartSendString((uint8_t*) "WordLength: UART_WORDLENGTH_8B\r\n");
+	uartSendString((uint8_t*) "StopBits: UART_STOPBITS_1\r\n");
+	uartSendString((uint8_t*) "Parity: UART_PARITY_NONE\r\n");
+	uartSendString((uint8_t*) "Mode: UART_HWCONTROL_NONE\r\n");
+	uartSendString((uint8_t*) "HwFlowCtl: UART_OVERSAMPLING_16\r\n");
+	uartSendString((uint8_t*) "OverSampling: UART_OVERSAMPLING_16\r\n");
+	uartSendString((uint8_t*) "Initialization successful \r\n");
+
+	return true;
+}
+
+void uartSendString(uint8_t *pstring) {
+
+	if (NULL == pstring) {
+		Error_Handler();
+	} else {
+		HAL_UART_Transmit(&huart6, pstring, sizeof(pstring), TIMEOUT);
+	}
 
 }
 
-void uartReceiveStringSize(uint8_t * pstring, uint16_t size) {
+void uartSendStringSize(uint8_t *pstring, uint16_t size) {
 
-	if (pstring == NULL || size == 0 || size > 1024) { // Verificar límites razonables
-
-			Error_Handler();
-
-		}
-
-    HAL_UART_Receive(&UartHandle, pstring, size, HAL_MAX_DELAY);
+	if (NULL != pstring) {
+		Error_Handler();
+	} else {
+		HAL_UART_Transmit(&huart6, pstring, size, TIMEOUT);
+	}
 
 }
 
-void Error_Handler(void) {
-	while (1)
-	  {
-	  }
+void uartReceiveStringSize(uint8_t *pstring, uint16_t size) {
+
+	if (NULL != pstring) {
+		Error_Handler();
+	} else {
+		HAL_UART_Receive(&huart6, pstring, size, TIMEOUT);
+	}
+
 }
-
-

@@ -1,0 +1,25 @@
+/*
+ * API_display_HAL.c
+ *
+ *  Created on: Jul 30, 2024
+ *      Author: ubuntu
+ */
+
+/* Includes ------------------------------------------------------------------*/
+
+#include "API_display_HAL.h"
+
+/* HAL API Code ------------------------------------------------------------------*/
+
+void API_display_HAL_Delay (uint32_t delay) {
+
+	HAL_Delay(delay);
+
+}
+
+void API_display_HAL_I2C_Write () {
+
+	// Para enviar comandos y datos desde el STM32 (maestro) al LCD (esclavo).
+	HAL_StatusTypeDef HAL_I2C_Master_Transmit(I2C_HandleTypeDef *hi2c, uint16_t DevAddress, uint8_t *pData, uint16_t Size, uint32_t Timeout); //Revisar parámetros
+
+}

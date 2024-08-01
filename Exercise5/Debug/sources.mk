@@ -22,12 +22,8 @@ C_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Core/Src \
 Drivers/API/Src \
 Drivers/BSP/STM32F4xx_Nucleo_144 \
-Drivers/CMSIS \
-Drivers/Core/Src \
-Drivers/STM32F4xx_HAL_Driver/Src/Legacy \
 Drivers/STM32F4xx_HAL_Driver/Src \
-Src \
-Startup \
 

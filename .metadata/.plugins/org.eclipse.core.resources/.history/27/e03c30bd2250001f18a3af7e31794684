@@ -1,0 +1,91 @@
+/*
+ * API_uart.c
+ *
+ *  Created on: Aug 1, 2024
+ *      Author: ubuntu
+ */
+
+/* Includes ------------------------------------------------------------------*/
+
+#include "API_uart.h"
+#include "stm32f4xx_hal.h"
+#include <string.h>
+
+void Error_Handler(void);
+
+/* Private define ------------------------------------------------------------*/
+
+#define TIMEOUT 100
+
+/* Private variables ---------------------------------------------------------*/
+
+UART_HandleTypeDef huart6;
+
+/* API code ------------------------------------------------------------*/
+
+bool_t uartInit() {
+	huart6.Instance = USART6;
+	huart6.Init.BaudRate = 115200;
+	huart6.Init.WordLength = UART_WORDLENGTH_8B;
+	huart6.Init.StopBits = UART_STOPBITS_1;
+	huart6.Init.Parity = UART_PARITY_NONE;
+	huart6.Init.Mode = UART_MODE_TX_RX;
+	huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+	if (HAL_UART_Init(&huart6) != HAL_OK) {
+		Error_Handler();
+	}
+
+	// TODO convert configurations to strings and avoid hard coded values
+	uartSendString((uint8_t*) "UART configuration: \r\n");
+	uartSendString((uint8_t*) "Instance: USART6\r");
+	uartSendString((uint8_t*) "BaudRate: 115200\r\n");
+	uartSendString((uint8_t*) "WordLength: UART_WORDLENGTH_8B\r\n");
+	uartSendString((uint8_t*) "StopBits: UART_STOPBITS_1\r\n");
+	uartSendString((uint8_t*) "Parity: UART_PARITY_NONE\r\n");
+	uartSendString((uint8_t*) "Mode: UART_HWCONTROL_NONE\r\n");
+	uartSendString((uint8_t*) "HwFlowCtl: UART_OVERSAMPLING_16\r\n");
+	uartSendString((uint8_t*) "OverSampling: UART_OVERSAMPLING_16\r\n");
+	uartSendString((uint8_t*) "Initialization successful \r\n");
+
+	return true;
+}
+
+void uartSendString(uint8_t *pstring) {
+
+	if (NULL == pstring) {
+		Error_Handler();
+	} else {
+		HAL_UART_Transmit(&huart6, pstring, sizeof(pstring), TIMEOUT);
+	}
+
+}
+void uartSendStringSize(uint8_t *pstring, uint16_t size) {
+
+	if (NULL != pstring) {
+		Error_Handler();
+	} else {
+		HAL_UART_Transmit(&huart6, pstring, size, TIMEOUT);
+	}
+
+}
+void uartReceiveStringSize(uint8_t *pstring, uint16_t size) {
+
+	if (NULL != pstring) {
+		Error_Handler();
+	} else {
+		HAL_UART_Receive(&huart6, pstring, size, TIMEOUT);
+	}
+
+}
+
+/**
+ * @brief  This function is executed in case of error occurrence.
+ * @retval None
+ */
+void Error_Handler(void) {
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1) {
+	}
+}

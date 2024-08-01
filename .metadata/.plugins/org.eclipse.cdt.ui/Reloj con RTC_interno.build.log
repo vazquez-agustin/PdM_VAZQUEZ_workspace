@@ -1,0 +1,10 @@
+13:37:48 **** Build of configuration Debug for project Reloj con RTC_interno ****
+make -j16 all 
+arm-none-eabi-size  Reloj\ con\ RTC_interno.elf 
+   text	   data	    bss	    dec	    hex	filename
+  18508	     20	   3604	  22132	   5674	Reloj con RTC_interno.elf
+Finished building: default.size.stdout
+ 
+
+13:37:48 Build Finished. 0 errors, 0 warnings. (took 379ms)
+

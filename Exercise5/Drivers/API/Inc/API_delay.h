@@ -1,11 +1,5 @@
-/*
- * API_delay.h
- *
- *  Created on: Jul 4, 2024
- *      Author: Laura Moreno
- */
-
 /* Define to prevent recursive inclusion -------------------------------------*/
+
 #ifndef API_API_DELAY_H_
 #define API_API_DELAY_H_
 
@@ -14,21 +8,24 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
+
 #include "stm32f4xx_hal.h"
 #include <stdint.h>  // Necesario para uint32_t
 #include <stdbool.h> // Necesario para bool
 
 /* Exported types ------------------------------------------------------------*/
+
 typedef uint32_t tick_t; // Representa un tipo de dato para almacenar un tiempo o conteo en milisegundos
 typedef bool bool_t; // Representa un tipo de dato booleano
 
 typedef struct {
-   tick_t startTime; // Almacena el tiempo en milisegundos cuando se inició el retardo
-   tick_t duration;  // Almacena la duración del retardo en milisegundos
-   bool_t running;  // Es un booleano que indica si el retardo está en curso (true) o no (false)
+	tick_t startTime; // Almacena el tiempo en milisegundos cuando se inició el retardo
+	tick_t duration;  // Almacena la duración del retardo en milisegundos
+	bool_t running; // Es un booleano que indica si el retardo está en curso (true) o no (false)
 } delay_t;
 
 /* Exported functions prototypes ---------------------------------------------*/
+
 void Error_Handler(void);
 
 /*
@@ -65,7 +62,6 @@ void delayWrite(delay_t *delay, tick_t duration);
  *
  * */
 bool_t delayIsRunning(delay_t *delay);
-
 
 #ifdef __cplusplus
 }

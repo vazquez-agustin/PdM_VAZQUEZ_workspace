@@ -6,32 +6,35 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+
 #include "API_debounce.h"
+#include "API_delay.h"
+#include "API_uart.h"
 
 /* Private variables ---------------------------------------------------------*/
-typedef enum{
 
-BUTTON_UP,  // Estado: inicial (no presionado)
-BUTTON_FALLING,  // Estado: siendo presionado
-BUTTON_DOWN, // Estado: totalmente presionado
-BUTTON_RAISING, // Estado: se suelta el botón
+typedef enum {
+
+	BUTTON_UP,  // Estado: inicial (no presionado)
+	BUTTON_FALLING,  // Estado: siendo presionado
+	BUTTON_DOWN, // Estado: totalmente presionado
+	BUTTON_RAISING, // Estado: se suelta el botón
 
 } debounceState_t;
 
-// Variable global privado
 static bool_t button_pressed;
-
-// Variable global privada (con static)
 static debounceState_t currentState;
+static delay_t time;
 
 /* Private function prototypes --------------------------*/
-void debounceFSM_init(void){
+void debounceFSM_init(void) {
+
+	delayInit(&time, 50);
 
 	currentState = BUTTON_UP;
 	button_pressed = false;
 
 }
-
 
 bool_t debounceFSM_isButtonDown() {
 
@@ -57,7 +60,7 @@ void debounceFSM_update(bool_t button) {
 
 	button_pressed = button;
 
-	switch(currentState) {
+	switch (currentState) {
 
 	case BUTTON_UP:
 
@@ -73,6 +76,7 @@ void debounceFSM_update(bool_t button) {
 
 		if (debounceFSM_readKey()) {
 
+			uartSendString((uint8_t*) "Flanco descendente detectado \r\n");
 			currentState = BUTTON_DOWN;
 
 		} else {
@@ -97,6 +101,7 @@ void debounceFSM_update(bool_t button) {
 
 		if (!debounceFSM_readKey()) {
 
+			uartSendString((uint8_t*) "Flanco ascendente detectado \r\n");
 			currentState = BUTTON_UP;
 
 		} else {
