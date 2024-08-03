@@ -24,6 +24,7 @@ C_DEPS :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
+Drivers/API/BME680/Src \
 Drivers/API/displayLCD/Src \
 Drivers/STM32F4xx_HAL_Driver/Src \
 

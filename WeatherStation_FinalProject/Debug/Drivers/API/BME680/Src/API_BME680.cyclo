@@ -1,0 +1,4 @@
+../Drivers/API/BME680/Src/API_BME680.c:11:5:BME680_Init	1
+../Drivers/API/BME680/Src/API_BME680.c:16:5:BME680_ReadData	1
+../Drivers/API/BME680/Src/API_BME680.c:21:5:BME680_SetConfig	1
+../Drivers/API/BME680/Src/API_BME680.c:26:5:BME680_Calibrate	1
