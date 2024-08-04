@@ -11,7 +11,8 @@
 #include "API_display_HAL.h"
 
 typedef enum {
-	false = 0, true
+	false = 0,
+	true,
 } bool_t;
 
 /* Private define ------------------------------------------------------------*/
@@ -201,7 +202,7 @@ static void API_display_writeByte(uint8_t data, bool_t rs) {
 static void API_display_writeNibble(uint8_t nibble, bool_t rs) {
 
 	// Prepare the data byte by masking the lower 4 bits and keeping only the higher 4 bits.
-	uint8_t data_u = (nibble & MASKnIBBLE) | BACKlIGHT;
+	uint8_t data_u = (nibble & MASKnIBBLE) | BACKlIGHT; // with BACKLIGHT I set light in the screen
 
 	// Set the RS (Register Select) bit according to the rs flag.
 	if (rs == true) {
