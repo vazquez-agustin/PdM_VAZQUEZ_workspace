@@ -9,6 +9,7 @@
 #define API_BME680_INC_API_BME680_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 typedef struct {
 	float temperature;
@@ -18,15 +19,15 @@ typedef struct {
 } BME680_t;
 
 // Inicializa el sensor BME680
-int BME680_Init(void);
+int API_BME680_Init(void);
 
 // Lee datos del sensor BME680
-int BME680_ReadData(BME680_t *data);
+int API_BME680_ReadData(BME680_t *data);
 
 // Configura el sensor BME680
-int BME680_SetConfig(void);
+int API_BME680_SetConfig(void);
 
 // Calibra el sensor BME680
-int BME680_Calibrate(void);
+int API_BME680_Calibrate(void);
 
 #endif /* API_BME680_INC_API_BME680_H_ */

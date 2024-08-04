@@ -18,13 +18,18 @@
 
 /* Function Prototypes -------------------------------------------------------*/
 
+void API_BME680_HAL_Delay(uint32_t delay);
+
 // Inicializa la comunicación SPI con el sensor BME680
-void BME680_HAL_Init(SPI_HandleTypeDef *hspi);
+void API_BME680_HAL_SPI_Init(void);
 
 // Enviar datos al BME680 a través de SPI
-void BME680_HAL_Write(uint8_t reg, uint8_t *data, uint16_t size);
+void API_BME680_HAL_SPI_Write(uint8_t *data, uint16_t size);
 
 // Recibir datos del BME680 a través de SPI
-void BME680_HAL_Read(uint8_t reg, uint8_t *data, uint16_t size);
+void API_BME680_HAL_SPI_Read(uint8_t *data, uint16_t size);
+
+// Setea pines de GPIO en HIGH o LOW
+void API_BME680_HAL_SPI_WritePin(uint8_t state);
 
 #endif /* API_BME680_INC_API_BME680_HAL_H_ */
