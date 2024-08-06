@@ -15,13 +15,12 @@ SPI_HandleTypeDef hspi1;
 
 /* Private define ------------------------------------------------------------*/
 
-#define TIMEOUT 100
-#define CS_Pin GPIO_PIN_15
-#define CS_Port GPIOA
+#define TIMEOUT 1000
 
 /* HAL API code --------------------------------------------------------------*/
 
 void API_BME680_HAL_Delay(uint32_t delay) {
+
 	/**
 	 * @brief This function provides minimum delay (in milliseconds) based
 	 *        on variable incremented.
@@ -34,6 +33,32 @@ void API_BME680_HAL_Delay(uint32_t delay) {
 	 * @retval None
 	 */
 	HAL_Delay(delay);
+
+}
+
+/**
+ * @brief GPIO Initialization Function
+ * @param None
+ * @retval None
+ */
+void API_BME680_HAL_GPIO_Init(void) {
+
+	GPIO_InitTypeDef GPIO_InitStruct = { 0 };
+
+	/* GPIO Ports Clock Enable */
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	__HAL_RCC_GPIOB_CLK_ENABLE();
+
+	/*Configure GPIO pin Output Level */
+	HAL_GPIO_WritePin(CS_Output_GPIO_Port, CS_Output_Pin, GPIO_PIN_RESET);
+
+	/*Configure GPIO pin : CS_Output_Pin */
+	GPIO_InitStruct.Pin = CS_Output_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(CS_Output_GPIO_Port, &GPIO_InitStruct);
+
 }
 
 /**
@@ -42,6 +67,7 @@ void API_BME680_HAL_Delay(uint32_t delay) {
  * @retval None
  */
 void API_BME680_HAL_SPI_Init(void) {
+
 	/* SPI1 parameter configuration*/
 	hspi1.Instance = SPI1;
 	hspi1.Init.Mode = SPI_MODE_MASTER;
@@ -55,57 +81,42 @@ void API_BME680_HAL_SPI_Init(void) {
 	hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
 	hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
 	hspi1.Init.CRCPolynomial = 10;
+
 	if (HAL_SPI_Init(&hspi1) != HAL_OK) {
+
 		Error_Handler();
+
 	}
 
 }
 
-// Enviar datos al BME680 a través de SPI
-void API_BME680_HAL_SPI_Write(uint8_t *data, uint16_t size) {
-	/**
-	 * @brief  Transmit an amount of data in blocking mode.
-	 * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
-	 *               the configuration information for SPI module.
-	 * @param  pData pointer to data buffer
-	 * @param  Size amount of data to be sent
-	 * @param  Timeout Timeout duration
-	 * @retval HAL status
-	 */
-	HAL_SPI_Transmit(&hspi1, data, size, TIMEOUT);
+// Transmitir datos a través de SPI
+void API_BME680_HAL_Transmit(uint8_t *pData, uint16_t size) {
+
+	//API_BME680_selectPin();
+	HAL_SPI_Transmit(&hspi1, pData, size, TIMEOUT);
+	//API_BME680_deselectPin();
+
 }
 
-// Recibir datos del BME680 a través de SPI
-void API_BME680_HAL_SPI_Read(uint8_t *data, uint16_t size) {
-	/**
-	 * @brief  Receive an amount of data in blocking mode.
-	 * @param  hspi pointer to a SPI_HandleTypeDef structure that contains
-	 *               the configuration information for SPI module.
-	 * @param  pData pointer to data buffer
-	 * @param  Size amount of data to be received
-	 * @param  Timeout Timeout duration
-	 * @retval HAL status
-	 */
-	HAL_SPI_Receive(&hspi1, data, size, TIMEOUT);
+// Recibir datos a través de SPI
+void API_BME680_HAL_Receive(uint8_t *pData, uint16_t size) {
+
+	//API_BME680_selectPin();
+	HAL_SPI_Receive(&hspi1, pData, size, TIMEOUT);
+	//API_BME680_deselectPin();
+
 }
 
-void API_BME680_HAL_SPI_WritePin(uint8_t state) {
-	/**
-	 * @brief  Sets or clears the selected data port bit.
-	 *
-	 * @note   This function uses GPIOx_BSRR register to allow atomic read/modify
-	 *         accesses. In this way, there is no risk of an IRQ occurring between
-	 *         the read and the modify access.
-	 *
-	 * @param  GPIOx where x can be (A..K) to select the GPIO peripheral for STM32F429X device or
-	 *                      x can be (A..I) to select the GPIO peripheral for STM32F40XX and STM32F427X devices.
-	 * @param  GPIO_Pin specifies the port bit to be written.
-	 *          This parameter can be one of GPIO_PIN_x where x can be (0..15).
-	 * @param  PinState specifies the value to be written to the selected bit.
-	 *          This parameter can be one of the GPIO_PinState enum values:
-	 *            @arg GPIO_PIN_RESET: to clear the port pin
-	 *            @arg GPIO_PIN_SET: to set the port pin
-	 * @retval None
-	 */
-	HAL_GPIO_WritePin(CS_Port, CS_Pin, state);
+// Control del pin CS (Chip Select)
+void API_BME680_selectPin(uint8_t port, uint8_t pin) {
+
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+
+}
+
+void API_BME680_deselectPin(uint8_t port, uint8_t pin) {
+
+	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+
 }
