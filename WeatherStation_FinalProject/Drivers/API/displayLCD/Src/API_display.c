@@ -163,6 +163,8 @@ void API_display_SetCursor(uint8_t row, uint8_t col) {
 
 /* Private API code ----------------------------------------------------------*/
 
+/* Function Implementations --------------------------------------------------*/
+
 /**
  * @brief Sends a byte to the LCD display in nibble format.
  *

@@ -49,6 +49,11 @@ void API_BME680_readGas(float *gas);
 
 void API_BME680_readCalibrationData(void);
 float API_BME680_readTemperature(void);
+float API_BME680_readPressure(void);
+float API_BME680_readHumidity(double temp_comp);
+uint8_t API_BME680_calculateHeaterResistance(uint16_t target_temp, int16_t amb_temp);
+uint32_t API_BME680_readGasResistance(void);
+
 
 /*
 typedef struct {
