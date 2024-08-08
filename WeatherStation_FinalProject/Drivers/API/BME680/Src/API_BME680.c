@@ -64,13 +64,20 @@ static void API_BME680_readCalibrationPressure(void);
 static void API_BME680_readCalibrationHumidity(void);
 static void API_BME680_readCalibrationGas(void);
 
-
-
 static uint8_t API_BME680_readChipID(void);
 
 /* Public API code -----------------------------------------------------------*/
 
 /* Function Implementations --------------------------------------------------*/
+
+// Initialize BME680 by reading ChipID
+void API_BME680_Init(void) {
+
+API_BME680_HAL_SPI_Init();
+API_BME680_HAL_Delay(1000);
+
+API_BME680_readChipID();
+}
 
 // Read Temperature
 float API_BME680_readTemperature(void) {
@@ -78,7 +85,7 @@ float API_BME680_readTemperature(void) {
 	//uint8_t temp_msb, temp_lsb, temp_xlsb;
 	//uint32_t temp_raw;
 	// Variables para los cálculos
-	double var1, var2, t_fine;
+	float var1, var2, t_fine;
 
 	uint8_t temp_msb = API_BME680_readRegister(BME680_REG_TEMP_MSB, &temp_msb, 1);
 	uint8_t temp_lsb = API_BME680_readRegister(BME680_REG_TEMP_LSB, &temp_lsb, 1);
@@ -89,16 +96,21 @@ float API_BME680_readTemperature(void) {
 
 	//float temperature;
 
-	// Cálculos para la compensación de temperatura usando punto flotante
-	var1 = (((double) temp_raw / 16384.0) - ((double) calib_data.par_t1 / 1024.0)) * (double) calib_data.par_t2;
-	var2 = ((((double) temp_raw / 131072.0) - ((double) calib_data.par_t1 / 8192.0)) *
-			 (((double) temp_raw / 131072.0) - ((double) calib_data.par_t1 / 8192.0))) *
-			 ((double) calib_data.par_t3 * 16.0);
+	// Calculate var1 data
+	var1 = (((float) temp_raw / 16384.0) - ((float) calib_data.par_t1 / 1024.0)) * (float) calib_data.par_t2;
 
+	// Calculate var2 data
+	var2 = ((((float) temp_raw / 131072.0) - ((float) calib_data.par_t1 / 8192.0)) *
+			 (((float) temp_raw / 131072.0) - ((float) calib_data.par_t1 / 8192.0))) *
+			 ((float) calib_data.par_t3 * 16.0);
+
+	// t_fine value
 	t_fine = var1 + var2;
+
 	temp_comp = t_fine / 5120.0;
 
-	return (float) temp_comp;
+	return temp_comp;
+
 }
 
 // Read Pressure
@@ -111,51 +123,69 @@ float API_BME680_readPressure(void) {
 	uint8_t press_xlsb = API_BME680_readRegister(BME680_REG_PRESS_XLSB, &press_xlsb, 1);
 	int32_t press_raw = ((uint32_t) press_msb << 12) | ((uint32_t) press_lsb << 4) | ((uint32_t) press_xlsb >> 4);
 
-	var1 = ((double)t_fine / 2.0) - 64000.0;
-	var2 = var1 * var1 * ((double)calib_data.par_p6 / 131072.0);
-	var2 = var2 + (var1 * (double)calib_data.par_p5 * 2.0);
-	var2 = (var2 / 4.0) + ((double)calib_data.par_p4 * 65536.0);
-	var1 = ((((double)calib_data.par_p3 * var1 * var1) / 16384.0) +
-	((double)calib_data.par_p2 * var1)) / 524288.0;
-	var1 = (1.0 + (var1 / 32768.0)) * (double)calib_data.par_p1;
-	press_comp = 1048576.0 - (double)calib_data.press_adc;
-	press_comp = ((press_comp - (var2 / 4096.0)) * 6250.0) / var1;
-	var1 = ((double)calib_data.par_p9 * press_comp * press_comp) / 2147483648.0;
-	var2 = press_comp * ((double)calib_data.par_p8 / 32768.0);
-	var3 = (press_comp / 256.0) * (press_comp / 256.0) *
-	(press_comp / 256.0) * (calib_data.par_p10 / 131072.0);
-	press_comp = press_comp + (var1 + var2 + var3 +
-	((double)calib_data.par_p7 * 128.0)) / 16.0;
+	var1 = ((float)t_fine / 2.0) - 64000.0;
+	var2 = var1 * var1 * ((float)calib_data.par_p6 / 131072.0);
+	var2 = var2 + (var1 * (float)calib_data.par_p5 * 2.0);
+	var2 = (var2 / 4.0) + ((float)calib_data.par_p4 * 65536.0);
+	var1 = ((((float)calib_data.par_p3 * var1 * var1) / 16384.0) +
+			 ((float)calib_data.par_p2 * var1)) / 524288.0;
+	var1 = (1.0 + (var1 / 32768.0)) * (float)calib_data.par_p1;
+	press_comp = 1048576.0 - (float)calib_data.press_adc;
 
-	return (float) press_comp;
+	// Avoid division by 0 if var1 = 0
+	if ((int)var1 != 0) {
+
+		press_comp = ((press_comp - (var2 / 4096.0)) * 6250.0) / var1;
+		var1 = ((float)calib_data.par_p9 * press_comp * press_comp) / 2147483648.0;
+		var2 = press_comp * ((float)calib_data.par_p8 / 32768.0);
+		var3 = (press_comp / 256.0) * (press_comp / 256.0) *
+			   (press_comp / 256.0) * (calib_data.par_p10 / 131072.0);
+		press_comp = press_comp + (var1 + var2 + var3 +	((float)calib_data.par_p7 * 128.0)) / 16.0;
+
+	} else {
+
+		press_comp = 0;
+
+	}
+
+	return press_comp;
 
 }
 
 // Read Humidity
-float API_BME680_readHumidity(double temp_comp) {
+float API_BME680_readHumidity(float temp_comp) {
 
-	double var1, var2, var3, var4, hum_comp;
+	float var1, var2, var3, var4, hum_comp;
 
 	uint8_t hum_msb = API_BME680_readRegister(BME680_REG_HUM_MSB, &hum_msb, 1);
 	uint8_t hum_lsb = API_BME680_readRegister(BME680_REG_HUM_LSB, &hum_lsb, 1);
 	int32_t hum_raw = ((uint32_t) hum_msb << 8) | (uint32_t) hum_lsb;
 
-	var1 = calib_data.hum_adc - (((double)calib_data.par_h1 * 16.0) + (((double)calib_data.par_h3 / 2.0) * temp_comp));
-	var2 = var1 * (((double)calib_data.par_h2 / 262144.0) * (1.0 + (((double)calib_data.par_h4 / 16384.0) *
-	temp_comp) + (((double)calib_data.par_h5 / 1048576.0) * temp_comp * temp_comp)));
-	var3 = (double)calib_data.par_h6 / 16384.0;
-	var4 = (double)calib_data.par_h7 / 2097152.0;
+	// Calculate var1 data
+	var1 = calib_data.hum_adc - (((float)calib_data.par_h1 * 16.0) + (((float)calib_data.par_h3 / 2.0) * temp_comp));
+
+	// Calculate var2 data
+	var2 = var1 * (((float)calib_data.par_h2 / 262144.0) * (1.0 + (((float)calib_data.par_h4 / 16384.0) * temp_comp) +
+				  (((float)calib_data.par_h5 / 1048576.0) * temp_comp * temp_comp)));
+
+	// Calculate var3 data
+	var3 = (float)calib_data.par_h6 / 16384.0;
+
+	// Calculate var4 data
+	var4 = (float)calib_data.par_h7 / 2097152.0;
+
+
 	hum_comp = var2 + ((var3 + (var4 * temp_comp)) * var2 * var2);
 
 	// Compensación de humedad de acuerdo a la fórmula proporcionada
-	var1 = hum_raw - (((double)calib_data.par_h1 * 16.0) + (((double)calib_data.par_h3 / 2.0) * temp_comp));
-	var2 = var1 * (((double)calib_data.par_h2 / 262144.0) * (1.0 + (((double)calib_data.par_h4 / 16384.0) *
-              temp_comp) + (((double)par_h5 / 1048576.0) * temp_comp * temp_comp)));
-	var3 = (double)calib_data.par_h6 / 16384.0;
-	var4 = (double)calib_data.par_h7 / 2097152.0;
+	var1 = hum_raw - (((float)calib_data.par_h1 * 16.0) + (((float)calib_data.par_h3 / 2.0) * temp_comp));
+	var2 = var1 * (((float)calib_data.par_h2 / 262144.0) * (1.0 + (((float)calib_data.par_h4 / 16384.0) * temp_comp) +
+			      (((float)par_h5 / 1048576.0) * temp_comp * temp_comp)));
+	var3 = (float)calib_data.par_h6 / 16384.0;
+	var4 = (float)calib_data.par_h7 / 2097152.0;
 	hum_comp = var2 + ((var3 + (var4 * temp_comp)) * var2 * var2);
 
-	return (float) hum_comp;
+	return hum_comp;
 
 }
 
@@ -422,29 +452,17 @@ static void API_BME680_readCalibrationGas(void) {
 
 }
 
+ // Read Chip ID
+static uint8_t API_BME680_readChipID(void) {
 
-/*
- // Inicializar el BME680
- void API_BME680_Init(void) {
+	uint8_t reg = BME680_REG_CHIP_ID | 0x80;
+	uint8_t chip_id = 0;
 
- API_BME680_HAL_SPI_Init();
- API_BME680_HAL_Delay(1000);
+	API_BME680_selectPin(CS_Output_GPIO_Port, CS_Output_Pin);
+	API_BME680_HAL_Transmit(&reg, sizeof(reg));
+	API_BME680_HAL_Receive(&chip_id, sizeof(chip_id));
+	API_BME680_deselectPin(CS_Output_GPIO_Port, CS_Output_Pin);
 
- API_BME680_readChipID();
- }
-
- // Lee Chip ID
- static uint8_t API_BME680_readChipID(void) {
- uint8_t reg = BME680_REG_CHIP_ID | 0x80;
- uint8_t chip_id = 0;
-
- API_BME680_selectPin(CS_Output_GPIO_Port, CS_Output_Pin);
- API_BME680_HAL_Transmit(&reg, sizeof(reg));
- API_BME680_HAL_Receive(&chip_id, sizeof(chip_id));
- API_BME680_deselectPin(CS_Output_GPIO_Port, CS_Output_Pin);
-
- return chip_id;
+	return chip_id;
 
  }
-
- */
