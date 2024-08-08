@@ -40,43 +40,13 @@
 /* Function Prototypes -------------------------------------------------------*/
 
 void API_BME680_Init(void);
-/*
-void API_BME680_readTemperature(float *temperature);
-void API_BME680_readHumidity(float *humidity);
-void API_BME680_readPressure(float *pressure);
-void API_BME680_readGas(float *gas);
-*/
 
 void API_BME680_readCalibrationData(void);
 float API_BME680_readTemperature(void);
 float API_BME680_readPressure(void);
-float API_BME680_readHumidity(double temp_comp);
+float API_BME680_readHumidity(float temp_comp);
 uint8_t API_BME680_calculateHeaterResistance(uint16_t target_temp, int16_t amb_temp);
 uint32_t API_BME680_readGasResistance(void);
 
 
-/*
-typedef struct {
-	float temperature;
-	float humedity;
-	float pressure;
-	float gas;
-} BME680_t;
-
-void BME680_Init(void);
-void BME680_ReadReg(uint8_t reg, uint8_t *pData);
-void BME680_WriteReg(uint8_t reg, uint8_t value);
-*/
-
-/*
-
-// Lee datos del sensor BME680
-void API_BME680_ReadData(BME680_t *data);
-
-// Configura el sensor BME680
-void API_BME680_SetConfig(void);
-
-// Calibra el sensor BME680
-void API_BME680_Calibrate(void);
-*/
 #endif /* API_BME680_INC_API_BME680_H_ */

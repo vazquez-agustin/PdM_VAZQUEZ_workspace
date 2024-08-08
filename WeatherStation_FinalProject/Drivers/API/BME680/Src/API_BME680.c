@@ -73,10 +73,11 @@ static uint8_t API_BME680_readChipID(void);
 // Initialize BME680 by reading ChipID
 void API_BME680_Init(void) {
 
-API_BME680_HAL_SPI_Init();
-API_BME680_HAL_Delay(1000);
+	API_BME680_HAL_SPI_Init();
+	API_BME680_HAL_Delay(1000);
 
-API_BME680_readChipID();
+	API_BME680_readChipID();
+
 }
 
 // Read Temperature
