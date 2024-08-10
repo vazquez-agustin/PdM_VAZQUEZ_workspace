@@ -21,9 +21,6 @@
 #define Relay_Output_Pin GPIO_PIN_4
 #define Relay_Output_GPIO_Port GPIOE
 
-#define CS_Output_Pin GPIO_PIN_15
-#define CS_Output_GPIO_Port GPIOA
-
 /* Function Prototypes -------------------------------------------------------*/
 
 void API_Relay_HAL_GPIO_Init(void);

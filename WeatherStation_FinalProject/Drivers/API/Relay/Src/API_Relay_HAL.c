@@ -23,22 +23,12 @@ void API_Relay_HAL_GPIO_Init(void) {
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(Relay_Output_GPIO_Port, Relay_Output_Pin, GPIO_PIN_RESET);
 
-	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(CS_Output_GPIO_Port, CS_Output_Pin, GPIO_PIN_RESET);
-
 	/*Configure GPIO pin : Relay_Output_Pin */
 	GPIO_InitStruct.Pin = Relay_Output_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(Relay_Output_GPIO_Port, &GPIO_InitStruct);
-
-	/*Configure GPIO pin : CS_Output_Pin */
-	GPIO_InitStruct.Pin = CS_Output_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(CS_Output_GPIO_Port, &GPIO_InitStruct);
 
 }
 

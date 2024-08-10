@@ -12,226 +12,332 @@
 #include "API_display.h"
 
 /* Private define ------------------------------------------------------------*/
+/////////////////////
+BME680_CalibData calib;
 
-float temp_comp;
-
-typedef struct {
-
-	// temperature
-	uint16_t par_t1;
-	int16_t par_t2;
-	int8_t par_t3;
-	int16_t temp_adc;
-	// pressure
-	uint16_t par_p1;
-	int16_t par_p2;
-	int8_t par_p3;
-	int16_t par_p4;
-	int16_t par_p5;
-	int8_t par_p6;
-	int8_t par_p7;
-	int16_t par_p8;
-	int16_t par_p9;
-	uint8_t par_p10;
-	int32_t press_adc;
-	// humidity
-    uint16_t par_h1;
-    uint16_t par_h2;
-    int8_t par_h3;
-    int8_t par_h4;
-    int8_t par_h5;
-    uint8_t par_h6;
-    int8_t par_h7;
-    int32_t hum_adc;
-    // gas
-    uint8_t par_g1;
-    int16_t par_g2;
-    int8_t par_g3;
-    uint8_t res_heat_range;
-    int8_t res_heat_val;
-    int32_t gas_adc;
-    uint8_t gas_range;
-    int8_t range_switching_error;
-
-} BME680_CalibData;
-
-BME680_CalibData calib_data;
-
-static void API_BME680_readRegister(uint8_t reg, uint8_t *pData, uint16_t size);
-
-static void API_BME680_readCalibrationTemperature(void);
-static void API_BME680_readCalibrationPressure(void);
-static void API_BME680_readCalibrationHumidity(void);
-static void API_BME680_readCalibrationGas(void);
-
-static uint8_t API_BME680_readChipID(void);
+//static uint8_t API_BME680_readChipID(void);
+static void API_BME680_readRegister(uint8_t reg, uint8_t *data);
+static void API_BME680_writeRegister(uint8_t reg, uint8_t value);
 
 /* Public API code -----------------------------------------------------------*/
 
 /* Function Implementations --------------------------------------------------*/
 
-// Initialize BME680 by reading ChipID
-void API_BME680_Init(void) {
+void API_BME680_setMemoryPage(uint8_t page) {
 
-	API_BME680_HAL_SPI_Init();
-	API_BME680_HAL_Delay(1000);
+	uint8_t reg = 0x73 & BME680_SPI_WRITE_MASK; // Registro para seleccionar la página de memoria
+	uint8_t value = (page == 1) ? 0x10 : 0x00; // Página 1 si page == 1, de lo contrario página 0
 
-	API_BME680_readChipID();
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&reg, sizeof(reg));
+	API_BME680_HAL_Transmit(&value, sizeof(value));
+	API_BME680_deselectPin();
 
 }
 
-// Read Temperature
-float API_BME680_readTemperature(void) {
+void API_BME680_Initialize(void) {
 
-	//uint8_t temp_msb, temp_lsb, temp_xlsb;
-	//uint32_t temp_raw;
-	// Variables para los cálculos
-	float var1, var2, t_fine;
+	// 1. Configura la sobremuestreo de humedad a 1x
+	uint8_t ctrl_hum = (0x01 & 0x07);  // osrs_h<2:0> = 0b001 (1x)
+	API_BME680_writeRegister(BME680_REG_CTRL_HUM, ctrl_hum);
 
-	uint8_t temp_msb = API_BME680_readRegister(BME680_REG_TEMP_MSB, &temp_msb, 1);
-	uint8_t temp_lsb = API_BME680_readRegister(BME680_REG_TEMP_LSB, &temp_lsb, 1);
-	uint8_t temp_xlsb = API_BME680_readRegister(BME680_REG_TEMP_XLSB, &temp_xlsb, 1);
+	// 2. Configura la sobremuestreo de temperatura a 2x y presión a 16x
+	uint8_t ctrl_meas = (0x02 << 5) | (0x05 << 2); // osrs_t<2:0> = 0b010 (2x), osrs_p<2:0> = 0b101 (16x)
+	API_BME680_writeRegister(BME680_REG_CTRL_MEAS, ctrl_meas);
 
-	// Combinar los bytes leídos en un solo valor raw
-	uint32_t temp_raw = ((uint32_t) temp_msb << 12) | ((uint32_t) temp_lsb << 4) | ((uint32_t) (temp_xlsb >> 4));
+	// 3. Configura la duración del calentamiento del sensor de gas a 100 ms
+	uint8_t gas_wait_0 = 0x59;  // 100 ms heat up
+	API_BME680_writeRegister(BME680_REG_GAS_WAIT_0, gas_wait_0);
 
-	//float temperature;
+	// 4. Configura el set-point del calentador a 300 °C (esto es un ejemplo, la conversión puede variar)
+	uint8_t reg_value = (uint8_t) ((300 / 10) + 46);
+	uint8_t res_heat_0 = reg_value; // Conversión a valor de registro
+	API_BME680_writeRegister(BME680_REG_RES_HEAT_0, res_heat_0);
 
-	// Calculate var1 data
-	var1 = (((float) temp_raw / 16384.0) - ((float) calib_data.par_t1 / 1024.0)) * (float) calib_data.par_t2;
+	// 5. Selecciona los parámetros del calentador y activa la medición de gas
+	uint8_t ctrl_gas_1 = (0x00 & 0x0F) | (1 << 4); // nb_conv<3:0> = 0x0, run_gas = 1
+	API_BME680_writeRegister(BME680_REG_CTRL_GAS_1, ctrl_gas_1);
 
-	// Calculate var2 data
-	var2 = ((((float) temp_raw / 131072.0) - ((float) calib_data.par_t1 / 8192.0)) *
-			 (((float) temp_raw / 131072.0) - ((float) calib_data.par_t1 / 8192.0))) *
-			 ((float) calib_data.par_t3 * 16.0);
+	// 6. Establece el modo en "forced mode" para iniciar la medición
+	uint8_t mode = BME680_MODE_FORCED;
+	API_BME680_writeRegister(BME680_REG_CTRL_MEAS, ctrl_meas | mode);
 
-	// t_fine value
-	t_fine = var1 + var2;
+}
 
-	temp_comp = t_fine / 5120.0;
+// Temperature
+uint32_t API_BME680_readTempADC(void) {
 
+	API_BME680_setMemoryPage(1);  // Cambia a la página de memoria 1
+
+	uint8_t t_reg_xlsb, t_reg_lsb, t_reg_msb;
+
+	API_BME680_readRegister(BME680_REG_TEMP_ADC_XLSB, &t_reg_xlsb);
+	API_BME680_readRegister(BME680_REG_TEMP_ADC_LSB, &t_reg_lsb);
+	API_BME680_readRegister(BME680_REG_TEMP_ADC_MSB, &t_reg_msb);
+
+	uint8_t t_xlsb = 0, t_lsb = 0, t_msb = 0;
+	uint32_t temp_adc = 0;
+
+	// Read XLSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&t_reg_xlsb, sizeof(t_reg_xlsb));
+	API_BME680_HAL_Receive(&t_xlsb, sizeof(t_xlsb));
+	API_BME680_deselectPin();
+
+	// Read LSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&t_reg_lsb, sizeof(t_reg_lsb));
+	API_BME680_HAL_Receive(&t_lsb, sizeof(t_lsb));
+	API_BME680_deselectPin();
+
+	// Read MSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&t_reg_msb, sizeof(t_reg_msb));
+	API_BME680_HAL_Receive(&t_msb, sizeof(t_msb));
+	API_BME680_deselectPin();
+
+	// Combina los bytes en el orden correcto
+	temp_adc = (((uint32_t) t_msb) << 12) | (((uint32_t) t_lsb) << 4)
+			| (((uint32_t) t_xlsb) >> 4);
+
+	return temp_adc;
+}
+
+double API_BME680_calculateTemperature(uint32_t temp_adc) {
+
+	int32_t var1, var2, var3, temp_comp;
+
+	var1 = ((int32_t) temp_adc >> 3) - ((int32_t) calib.par_t1 << 1);
+	var2 = (var1 * (int32_t) calib.par_t2) >> 11;
+	var3 = ((((var1 >> 1) * (var1 >> 1)) >> 12) * ((int32_t) calib.par_t3 << 4))
+			>> 14;
+	calib.t_fine = var2 + var3;
+	temp_comp = ((calib.t_fine * 5) + 128) >> 8;
+
+	// Devuelve la temperatura compensada
 	return temp_comp;
 
 }
 
-// Read Pressure
-float API_BME680_readPressure(void) {
+// Pressure
+uint32_t API_BME680_readPressADC(void) {
 
-	double var1, var2, var3, press_comp;
+	API_BME680_setMemoryPage(1);  // Cambia a la página de memoria 1
 
-	uint8_t press_msb = API_BME680_readRegister(BME680_REG_PRESS_MSB, &press_msb, 1);
-	uint8_t press_lsb = API_BME680_readRegister(BME680_REG_PRESS_LSB, &press_lsb, 1);
-	uint8_t press_xlsb = API_BME680_readRegister(BME680_REG_PRESS_XLSB, &press_xlsb, 1);
-	int32_t press_raw = ((uint32_t) press_msb << 12) | ((uint32_t) press_lsb << 4) | ((uint32_t) press_xlsb >> 4);
+	uint8_t p_reg_xlsb, p_reg_lsb, p_reg_msb;
 
-	var1 = ((float)t_fine / 2.0) - 64000.0;
-	var2 = var1 * var1 * ((float)calib_data.par_p6 / 131072.0);
-	var2 = var2 + (var1 * (float)calib_data.par_p5 * 2.0);
-	var2 = (var2 / 4.0) + ((float)calib_data.par_p4 * 65536.0);
-	var1 = ((((float)calib_data.par_p3 * var1 * var1) / 16384.0) +
-			 ((float)calib_data.par_p2 * var1)) / 524288.0;
-	var1 = (1.0 + (var1 / 32768.0)) * (float)calib_data.par_p1;
-	press_comp = 1048576.0 - (float)calib_data.press_adc;
+	API_BME680_readRegister(BME680_REG_PRESS_ADC_XLSB, &p_reg_xlsb);
+	API_BME680_readRegister(BME680_REG_PRESS_ADC_LSB, &p_reg_lsb);
+	API_BME680_readRegister(BME680_REG_PRESS_ADC_MSB, &p_reg_msb);
 
-	// Avoid division by 0 if var1 = 0
-	if ((int)var1 != 0) {
+	uint8_t p_xlsb = 0, p_lsb = 0, p_msb = 0;
+	uint32_t press_adc = 0;
 
-		press_comp = ((press_comp - (var2 / 4096.0)) * 6250.0) / var1;
-		var1 = ((float)calib_data.par_p9 * press_comp * press_comp) / 2147483648.0;
-		var2 = press_comp * ((float)calib_data.par_p8 / 32768.0);
-		var3 = (press_comp / 256.0) * (press_comp / 256.0) *
-			   (press_comp / 256.0) * (calib_data.par_p10 / 131072.0);
-		press_comp = press_comp + (var1 + var2 + var3 +	((float)calib_data.par_p7 * 128.0)) / 16.0;
+	// Read XLSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&p_reg_xlsb, sizeof(p_reg_xlsb));
+	API_BME680_HAL_Receive(&p_xlsb, sizeof(p_xlsb));
+	API_BME680_deselectPin();
 
+	// Read LSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&p_reg_lsb, sizeof(p_reg_lsb));
+	API_BME680_HAL_Receive(&p_lsb, sizeof(p_lsb));
+	API_BME680_deselectPin();
+
+	// Read MSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&p_reg_msb, sizeof(p_reg_msb));
+	API_BME680_HAL_Receive(&p_msb, sizeof(p_msb));
+	API_BME680_deselectPin();
+
+	// Combina los bytes en el orden correcto
+	press_adc = (((uint32_t) p_msb) << 12) | (((uint32_t) p_lsb) << 4) | (((uint32_t) p_xlsb) >> 4);
+
+	return press_adc;
+}
+
+double API_BME680_calculatePressure(uint32_t press_adc) {
+
+	int32_t var1, var2, var3, press_comp;
+
+	var1 = ((int32_t) calib.t_fine >> 1) - 64000;
+	var2 = ((((var1 >> 2) * (var1 >> 2)) >> 11) * (int32_t) calib.par_p6) >> 2;
+	var2 = var2 + ((var1 * (int32_t) calib.par_p5) << 1);
+	var2 = (var2 >> 2) + ((int32_t) calib.par_p4 << 16);
+	var1 = (((((var1 >> 2) * (var1 >> 2)) >> 13) *
+			   ((int32_t) calib.par_p3 << 5)) >> 3) + (((int32_t) calib.par_p2 * var1) >> 1);
+	var1 = var1 >> 18;
+	var1 = ((32768 + var1) * (int32_t)calib.par_p1) >> 15;
+	press_comp = 1048576 - press_adc;
+	press_comp = (uint32_t)((press_comp - (var2 >> 12)) * ((uint32_t)3125));
+	if (press_comp >= (1 << 30)) {
+		press_comp = ((press_comp / (uint32_t)var1) << 1);
 	} else {
-
-		press_comp = 0;
-
+		press_comp = ((press_comp << 1) / (uint32_t)var1);
 	}
+	var1 = ((int32_t)calib.par_p9 * (int32_t)(((press_comp >> 3) *
+			    (press_comp >> 3)) >> 13)) >> 12;
+	var2 = ((int32_t)(press_comp >> 2) * (int32_t)calib.par_p8) >> 13;
+	var3 = ((int32_t)(press_comp >> 8) * (int32_t)(press_comp >> 8) *
+			    (int32_t)(press_comp >> 8) * (int32_t)calib.par_p10) >> 17;
+	press_comp = (int32_t)(press_comp) +
+				((var1 + var2 + var3 + ((int32_t)calib.par_p7 << 7)) >> 4);
 
 	return press_comp;
 
 }
 
-// Read Humidity
-float API_BME680_readHumidity(float temp_comp) {
+// Humidity
+uint32_t API_BME680_readHumADC(void) {
 
-	float var1, var2, var3, var4, hum_comp;
+	API_BME680_setMemoryPage(1);  // Cambia a la página de memoria 1
 
-	uint8_t hum_msb = API_BME680_readRegister(BME680_REG_HUM_MSB, &hum_msb, 1);
-	uint8_t hum_lsb = API_BME680_readRegister(BME680_REG_HUM_LSB, &hum_lsb, 1);
-	int32_t hum_raw = ((uint32_t) hum_msb << 8) | (uint32_t) hum_lsb;
+	uint8_t h_reg_lsb, h_reg_msb;
 
-	// Calculate var1 data
-	var1 = calib_data.hum_adc - (((float)calib_data.par_h1 * 16.0) + (((float)calib_data.par_h3 / 2.0) * temp_comp));
+	API_BME680_readRegister(BME680_REG_HUM_ADC_LSB, &h_reg_lsb);
+	API_BME680_readRegister(BME680_REG_HUM_ADC_MSB, &h_reg_msb);
 
-	// Calculate var2 data
-	var2 = var1 * (((float)calib_data.par_h2 / 262144.0) * (1.0 + (((float)calib_data.par_h4 / 16384.0) * temp_comp) +
-				  (((float)calib_data.par_h5 / 1048576.0) * temp_comp * temp_comp)));
+	uint8_t h_lsb = 0, h_msb = 0;
+	uint32_t hum_adc = 0;
 
-	// Calculate var3 data
-	var3 = (float)calib_data.par_h6 / 16384.0;
+	// Read LSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&h_reg_lsb, sizeof(h_reg_lsb));
+	API_BME680_HAL_Receive(&h_lsb, sizeof(h_lsb));
+	API_BME680_deselectPin();
 
-	// Calculate var4 data
-	var4 = (float)calib_data.par_h7 / 2097152.0;
+	// Read MSB
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&h_reg_msb, sizeof(h_reg_msb));
+	API_BME680_HAL_Receive(&h_msb, sizeof(h_msb));
+	API_BME680_deselectPin();
 
+	// Combina los bytes en el orden correcto
+	hum_adc = (((uint32_t) h_msb) << 8) | (uint32_t) h_lsb;
 
-	hum_comp = var2 + ((var3 + (var4 * temp_comp)) * var2 * var2);
+	return hum_adc;
 
-	// Compensación de humedad de acuerdo a la fórmula proporcionada
-	var1 = hum_raw - (((float)calib_data.par_h1 * 16.0) + (((float)calib_data.par_h3 / 2.0) * temp_comp));
-	var2 = var1 * (((float)calib_data.par_h2 / 262144.0) * (1.0 + (((float)calib_data.par_h4 / 16384.0) * temp_comp) +
-			      (((float)par_h5 / 1048576.0) * temp_comp * temp_comp)));
-	var3 = (float)calib_data.par_h6 / 16384.0;
-	var4 = (float)calib_data.par_h7 / 2097152.0;
-	hum_comp = var2 + ((var3 + (var4 * temp_comp)) * var2 * var2);
+}
+
+double API_BME680_calculateHumidity(uint32_t hum_adc, uint32_t temp_comp) {
+
+	int32_t var1, var2, var3, var4, var5, var6, hum_comp, temp_scaled;
+
+	temp_scaled = (int32_t)temp_comp;
+	var1 = (int32_t)hum_adc - (int32_t)((int32_t)calib.par_h1 << 4) -
+			(((temp_scaled * (int32_t)calib.par_h3) / ((int32_t)100)) >> 1);
+	var2 = ((int32_t)calib.par_h2 * (((temp_scaled *
+			(int32_t)calib.par_h4) / ((int32_t)100)) +
+			(((temp_scaled * ((temp_scaled * (int32_t)calib.par_h5) /
+			((int32_t)100))) >> 6) / ((int32_t)100)) + ((int32_t)(1 << 14)))) >> 10;
+	var3 = var1 * var2;
+	var4 = (((int32_t)calib.par_h6 << 7) +
+			((temp_scaled * (int32_t)calib.par_h7) / ((int32_t)100))) >> 4;
+	var5 = ((var3 >> 14) * (var3 >> 14)) >> 10;
+	var6 = (var4 * var5) >> 1;
+	hum_comp = (((var3 + var6) >> 10) * ((int32_t) 1000)) >> 12;
 
 	return hum_comp;
 
 }
 
-// Calculate Resistance of heater
-uint8_t API_BME680_calculateHeaterResistance(uint16_t target_temp, int16_t amb_temp) {
+// Función para leer y almacenar los datos de calibración de temperatura
+void API_BME680_readCalibrationData(void) {
 
-    double var1, var2, var3, var4, var5;
-    uint8_t res_heat_x;
+	// Temperature calibration
+	// LSB
+	uint8_t t1_lsb, t2_lsb;
+	// MSB
+	uint8_t t1_msb, t2_msb;
+	uint8_t t3;
 
-    var1 = ((double)calib_data.par_g1 / 16.0) + 49.0;
-    var2 = (((double)calib_data.par_g2 / 32768.0) * 0.0005) + 0.00235;
-    var3 = (double)calib_data.par_g3 / 1024.0;
-    var4 = var1 * (1.0 + (var2 * (double)target_temp));
-    var5 = var4 + (var3 * (double)amb_temp);
-    res_heat_x = (uint8_t)(3.4 * ((var5 * (4.0 / (4.0 + (double)calib_data.res_heat_range)) *
-                (1.0 / (1.0 + ((double)calib_data.res_heat_val * 0.002)))) - 25));
+	// Read temperature calibration registers
+	API_BME680_readRegister(BME680_REG_PAR_T1_LSB, &t1_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_T1_MSB, &t1_msb);
+	calib.par_t1 = (uint16_t) ((t1_msb << 8) | t1_lsb);
 
-    return res_heat_x;
+	API_BME680_readRegister(BME680_REG_PAR_T2_LSB, &t2_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_T2_MSB, &t2_msb);
+	calib.par_t2 = (int16_t) ((t2_msb << 8) | t2_lsb);
 
-}
+	API_BME680_readRegister(BME680_REG_PAR_T3, &t3);
+	calib.par_t3 = (int8_t) t3;
 
-// Read Gas resistance
-uint32_t API_BME680_readGasResistance(void) {
+	// Pressure calibration
+	// LSB
+	uint8_t p1_lsb, p2_lsb, p4_lsb, p5_lsb, p8_lsb, p9_lsb;
+	// MSB
+	uint8_t p1_msb, p2_msb, p4_msb, p5_msb, p8_msb, p9_msb;
+	uint8_t p3, p6, p7, p10;
 
-    uint8_t buf[2];
+	// Read pressure calibration registers
+	API_BME680_readRegister(BME680_REG_PAR_P1_LSB, &p1_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_P1_MSB, &p1_msb);
+	calib.par_p1 = (uint16_t) ((p1_msb << 8) | p1_lsb);
 
-    // Leer gas_adc (0x2B<7:6> / 0x2A)
-    uint8_t gas_adc_msb = API_BME680_readRegister(BME680_REG_GAS_MSB, &gas_adc_msb, 1);
-    uint8_t gas_adc_lsb = API_BME680_readRegister(BME680_REG_GAS_LSB, &gas_adc_lsb, 1);
+	API_BME680_readRegister(BME680_REG_PAR_P2_LSB, &p2_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_P2_MSB, &p2_msb);
+	calib.par_p2 = (int16_t) ((p2_msb << 8) | p2_lsb);
 
+	API_BME680_readRegister(BME680_REG_PAR_P3, &p3);
+	calib.par_p3 = (int8_t) p3;
 
-    calib_data.gas_adc = (gas_adc_msb << 2) | (gas_adc_lsb >> 6);
+	API_BME680_readRegister(BME680_REG_PAR_P4_LSB, &p4_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_P4_MSB, &p4_msb);
+	calib.par_p4 = (int16_t) ((p4_msb << 8) | p4_lsb);
 
-    // Leer gas_range (0x2B<3:0>)
-    calib_data.gas_range = gas_adc_lsb & 0x0F;
+	API_BME680_readRegister(BME680_REG_PAR_P5_LSB, &p5_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_P5_MSB, &p5_msb);
+	calib.par_p5 = (int16_t) ((p5_msb << 8) | p5_lsb);
 
-    // Leer range_switching_error (0x04 <7:4>)
-    API_BME680_readRegister(0x04, buf, 1);
-    calib_data.range_switching_error = (int8_t)(buf[0] >> 4);
+	API_BME680_readRegister(BME680_REG_PAR_P6, &p6);
+	calib.par_p6 = (int8_t) p6;
 
-    // Calcular la resistencia del gas
-    double var1 = (1340.0 + 5.0 * calib_data.range_switching_error) * const_array1[calib_data.gas_range];
-    double gas_res = var1 * const_array2[calib_data.gas_range] / (calib_data.gas_adc - 512.0 + var1);
+	API_BME680_readRegister(BME680_REG_PAR_P7, &p7);
+	calib.par_p7 = (int8_t) p7;
 
-    return (uint32_t)gas_res;
+	API_BME680_readRegister(BME680_REG_PAR_P8_LSB, &p8_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_P8_MSB, &p8_msb);
+	calib.par_p8 = (int16_t) ((p8_msb << 8) | p8_lsb);
+
+	API_BME680_readRegister(BME680_REG_PAR_P9_LSB, &p9_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_P9_MSB, &p9_msb);
+	calib.par_p9 = (int16_t) ((p9_msb << 8) | p9_lsb);
+
+	API_BME680_readRegister(BME680_REG_PAR_P10, &p10);
+	calib.par_p10 = (uint8_t) p10;
+
+	// Humidity calibration
+	// LSB
+	uint8_t h1_lsb, h2_lsb;
+	// MSB
+	uint8_t h1_msb, h2_msb;
+	uint8_t h3, h4, h5, h6, h7;
+
+	// Read pressure calibration registers
+	API_BME680_readRegister(BME680_REG_PAR_H1_LSB, &h1_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_H1_MSB, &h1_msb);
+	calib.par_h1 = (uint16_t) ((h1_msb << 8) | h1_lsb);
+
+	API_BME680_readRegister(BME680_REG_PAR_H2_LSB, &h2_lsb);
+	API_BME680_readRegister(BME680_REG_PAR_H2_MSB, &h2_msb);
+	calib.par_h2 = (int16_t) ((h2_msb << 8) | h2_lsb);
+
+	API_BME680_readRegister(BME680_REG_PAR_H3, &h3);
+	calib.par_h3 = (uint8_t) h3;
+
+	API_BME680_readRegister(BME680_REG_PAR_H4, &h4);
+	calib.par_h4 = (uint8_t) h4;
+
+	API_BME680_readRegister(BME680_REG_PAR_H5, &h5);
+	calib.par_h5 = (uint8_t) h5;
+
+	API_BME680_readRegister(BME680_REG_PAR_H6, &h6);
+	calib.par_h6 = (uint8_t) h6;
+
+	API_BME680_readRegister(BME680_REG_PAR_H7, &h7);
+	calib.par_h7 = (uint8_t) h7;
 
 }
 
@@ -239,231 +345,53 @@ uint32_t API_BME680_readGasResistance(void) {
 
 /* Function Implementations --------------------------------------------------*/
 
-static void API_BME680_readRegister(uint8_t reg, uint8_t *pData, uint16_t size) {
+static void API_BME680_writeRegister(uint8_t reg, uint8_t value) {
 
-	reg |= 0x80;  // Set read bit
+	reg &= BME680_SPI_WRITE_MASK; // Asegúrate de que el bit de escritura esté limpio
 
-	API_BME680_selectPin(CS_Output_GPIO_Port, CS_Output_Pin);
-	API_BME680_HAL_Transmit(pData, size);
-	API_BME680_HAL_Receive(pData, size);
-	API_BME680_deselectPin(CS_Output_GPIO_Port, CS_Output_Pin);
-
-}
-
-// Calibration of Temperature
-static void API_BME680_readCalibrationTemperature(void) {
-
-	uint8_t buf[2];
-
-	// Read par_t1 (0xE9 / 0xEA)
-	API_BME680_readRegister(0xE9, buf, 1);
-	calib_data.par_t1 = buf[0];
-	API_BME680_readRegister(0xEA, buf, 1);
-	calib_data.par_t1 |= (uint16_t) buf[0] << 8;
-
-	// Read par_t2 (0x8A / 0x8B)
-	API_BME680_readRegister(0x8A, buf, 1);
-	calib_data.par_t2 = buf[0];
-	API_BME680_readRegister(0x8B, buf, 1);
-	calib_data.par_t2 |= (int16_t) buf[0] << 8;
-
-	// Read par_t3 (0x8C)
-	API_BME680_readRegister(0x8C, buf, 1);
-	calib_data.par_t3 = (int8_t) buf[0];
-
-	// Leer temp_adc (0x24<7:4> / 0x23 / 0x22)
-	uint8_t temp_adc_msb; // MSB
-	uint8_t temp_adc_mid; // Middle byte
-	uint8_t temp_adc_lsb; // LSB
-
-	// Read registers
-	API_BME680_readRegister(0x24, &temp_adc_msb, 1); // Lee los bits 7:4 del MSB
-	API_BME680_readRegister(0x23, &temp_adc_mid, 1); // Lee el byte medio
-	API_BME680_readRegister(0x22, &temp_adc_lsb, 1); // Lee el LSB
-
-	// Ensamblar el valor completo de temp_adc
-	calib_data.temp_adc = (temp_adc_msb & 0xF0) << 12 | // Bits 7-4 del MSB
-			(temp_adc_mid << 4) | // Byte medio
-			(temp_adc_lsb >> 4); // Bits 3-0 del LSB
-
-}
-
-// Calibration of Pressure
-static void API_BME680_readCalibrationPressure(void) {
-
-	uint8_t buf[2];
-
-	// Leer par_p1 (0x8E / 0x8F)
-	API_BME680_readRegister(0x8E, buf, 1);
-	calib_data.par_p1 = buf[0];
-	API_BME680_readRegister(0x8F, buf, 1);
-	calib_data.par_p1 |= (uint16_t)buf[0] << 8;
-
-	// Leer par_p2 (0x90 / 0x91)
-	API_BME680_readRegister(0x90, buf, 1);
-	calib_data.par_p2 = buf[0];
-	API_BME680_readRegister(0x91, buf, 1);
-	calib_data.par_p2 |= (int16_t)buf[0] << 8;
-
-	// Leer par_p3 (0x92)
-    API_BME680_readRegister(0x92, buf, 1);
-	calib_data.par_p3 = (int8_t)buf[0];
-
-	    // Leer par_p4 (0x94 / 0x95)
-    API_BME680_readRegister(0x94, buf, 1);
-    calib_data.par_p4 = buf[0];
-    API_BME680_readRegister(0x95, buf, 1);
-    calib_data.par_p4 |= (int16_t)buf[0] << 8;
-
-    // Leer par_p5 (0x96 / 0x97)
-	API_BME680_readRegister(0x96, buf, 1);
-    calib_data.par_p5 = buf[0];
-    API_BME680_readRegister(0x97, buf, 1);
-    calib_data.par_p5 |= (int16_t)buf[0] << 8;
-
-    // Leer par_p6 (0x99)
-    API_BME680_readRegister(0x99, buf, 1);
-    calib_data.par_p6 = (int8_t)buf[0];
-
-    // Leer par_p7 (0x98)
-    API_BME680_readRegister(0x98, buf, 1);
-    calib_data.par_p7 = (int8_t)buf[0];
-
-    // Leer par_p8 (0x9C / 0x9D)
-    API_BME680_readRegister(0x9C, buf, 1);
-    calib_data.par_p8 = buf[0];
-    API_BME680_readRegister(0x9D, buf, 1);
-    calib_data.par_p8 |= (int16_t)buf[0] << 8;
-
-    // Leer par_p9 (0x9E / 0x9F)
-    API_BME680_readRegister(0x9E, buf, 1);
-    calib_data.par_p9 = buf[0];
-    API_BME680_readRegister(0x9F, buf, 1);
-    calib_data.par_p9 |= (int16_t)buf[0] << 8;
-
-    // Leer par_p10 (0xA0)
-    API_BME680_readRegister(0xA0, buf, 1);
-    calib_data.par_p10 = buf[0];
-
-    // Leer press_adc (0x21<7:4> / 0x20 / 0x1F)
-    uint8_t press_adc_msb; // MSB
-    uint8_t press_adc_mid; // Middle byte
-    uint8_t press_adc_lsb; // LSB
-
-    // Read registers
-    API_BME680_readRegister(0x21, &press_adc_msb, 1); // Lee los bits 7:4 del MSB
-    API_BME680_readRegister(0x20, &press_adc_mid, 1); // Lee el byte medio
-    API_BME680_readRegister(0x1F, &press_adc_lsb, 1); // Lee el LSB
-
-    // Ensamblar el valor completo de press_adc
-    calib_data.press_adc = (press_adc_msb & 0xF0) << 12 | // Bits 7-4 del MSB
-                           (press_adc_mid << 4) | // Byte medio
-	                       (press_adc_lsb >> 4); // Bits 3-0 del LSB
-
-}
-
-// Calibration of Humidity
-static void API_BME680_readCalibrationHumidity(void) {
-
-    uint8_t buf[2];
-
-    // Leer par_h1 (0xE2<7:4>, 0xE3)
-    API_BME680_readRegister(0xE2, buf, 1);
-    uint8_t e2_lsb = buf[0] & 0x0F; // Bits 3-0 del LSB de par_h1
-    API_BME680_readRegister(0xE3, buf, 1);
-    calib_data.par_h1 = ((uint16_t)buf[0] << 4) | e2_lsb;
-
-    // Leer par_h2 (0xE1 / 0xE2<3:0>)
-    API_BME680_readRegister(0xE1, buf, 1);
-    uint8_t e2_msb = buf[0];
-    calib_data.par_h2 = ((uint16_t)e2_msb << 4) | ((buf[0] & 0xF0) >> 4);
-
-    // Leer par_h3 (0xE4)
-    API_BME680_readRegister(0xE4, buf, 1);
-    calib_data.par_h3 = (int8_t)buf[0];
-
-    // Leer par_h4 (0xE5)
-    API_BME680_readRegister(0xE5, buf, 1);
-    calib_data.par_h4 = (int8_t)buf[0];
-
-    // Leer par_h5 (0xE6)
-    API_BME680_readRegister(0xE6, buf, 1);
-    calib_data.par_h5 = (int8_t)buf[0];
-
-    // Leer par_h6 (0xE7)
-    API_BME680_readRegister(0xE7, buf, 1);
-    calib_data.par_h6 = buf[0];
-
-    // Leer par_h7 (0xE8)
-    API_BME680_readRegister(0xE8, buf, 1);
-    calib_data.par_h7 = (int8_t)buf[0];
-
-    // Leer hum_adc (0x26 / 0x25)
-    uint8_t hum_adc_msb; // MSB
-    uint8_t hum_adc_lsb; // LSB
-
-    // Read registers
-    API_BME680_readRegister(0x26, &hum_adc_msb, 1); // Lee el MSB
-    API_BME680_readRegister(0x25, &hum_adc_lsb, 1); // Lee el LSB
-
-    // Ensamblar el valor completo de hum_adc
-    calib_data.hum_adc = ((uint32_t)hum_adc_msb << 8) | (uint32_t)hum_adc_lsb;
-
-}
-
-// Calibration of Gas
-static void API_BME680_readCalibrationGas(void) {
-
-    uint8_t buf[2];
-
-    // Leer par_g1 (0xED)
-    API_BME680_readRegister(0xED, buf, 1);
-    calib_data.par_g1 = buf[0];
-
-    // Leer par_g2 (0xEB / 0xEC)
-    API_BME680_readRegister(0xEB, buf, 1);
-    calib_data.par_g2 = buf[0];
-    API_BME680_readRegister(0xEC, buf, 1);
-    calib_data.par_g2 |= (int16_t)buf[0] << 8;
-
-    // Leer par_g3 (0xEE)
-    API_BME680_readRegister(0xEE, buf, 1);
-    calib_data.par_g3 = (int8_t)buf[0];
-
-    // Leer res_heat_range (0x02 <5:4>)
-    API_BME680_readRegister(0x02, buf, 1);
-    calib_data.res_heat_range = (buf[0] & 0x30) >> 4;
-
-    // Leer res_heat_val (0x00)
-    API_BME680_readRegister(0x00, buf, 1);
-    calib_data.res_heat_val = (int8_t)buf[0];
-
-    // Leer gas_adc (0x2B / 0x2A / 0x29)
-    uint8_t gas_adc_msb;
-    uint8_t gas_adc_mid;
-    uint8_t gas_adc_lsb;
-
-    // Read registers
-    API_BME680_readRegister(0x2B, &gas_adc_msb, 1); // MSB
-    API_BME680_readRegister(0x2A, &gas_adc_mid, 1); // Middle byte
-    API_BME680_readRegister(0x29, &gas_adc_lsb, 1); // LSB
-
-    // Ensamblar el valor completo de gas_adc
-    calib_data.gas_adc = (gas_adc_msb << 10) | (gas_adc_mid << 2) | (gas_adc_lsb >> 6);
-
-}
-
- // Read Chip ID
-static uint8_t API_BME680_readChipID(void) {
-
-	uint8_t reg = BME680_REG_CHIP_ID | 0x80;
-	uint8_t chip_id = 0;
-
-	API_BME680_selectPin(CS_Output_GPIO_Port, CS_Output_Pin);
+	API_BME680_selectPin();
 	API_BME680_HAL_Transmit(&reg, sizeof(reg));
-	API_BME680_HAL_Receive(&chip_id, sizeof(chip_id));
-	API_BME680_deselectPin(CS_Output_GPIO_Port, CS_Output_Pin);
+	API_BME680_HAL_Transmit(&value, sizeof(value)); //////////
+	API_BME680_deselectPin();
 
-	return chip_id;
+}
+
+static void API_BME680_readRegister(uint8_t reg, uint8_t *data) {
+
+	reg |= BME680_SPI_READ_MASK;
+
+	API_BME680_selectPin();
+	API_BME680_HAL_Transmit(&reg, 1);
+	API_BME680_HAL_Receive(data, 1);
+	API_BME680_deselectPin();
+
+}
+
+/*
+ // Initialize BME680 by reading ChipID
+ void API_BME680_Init(void) {
+
+ API_BME680_HAL_SPI_Init();
+ API_BME680_HAL_Delay(1000);
+
+ API_BME680_readChipID();
 
  }
+
+ // Read Chip ID ESTA BIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN
+ static uint8_t API_BME680_readChipID(void) {
+
+ API_BME680_setMemoryPage(0);
+
+ uint8_t reg = BME680_REG_CHIP_ID | 0x80;
+ uint8_t chip_id = 0;
+
+ API_BME680_selectPin();
+ API_BME680_HAL_Transmit(&reg, sizeof(reg));
+ API_BME680_HAL_Receive(&chip_id, sizeof(chip_id));
+ API_BME680_deselectPin();
+
+ return chip_id;
+
+ }
+ */

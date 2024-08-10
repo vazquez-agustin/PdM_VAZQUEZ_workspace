@@ -51,17 +51,7 @@ void API_BME680_HAL_GPIO_Init(void) {
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(Relay_Output_GPIO_Port, Relay_Output_Pin, GPIO_PIN_RESET);
-
-	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(CS_Output_GPIO_Port, CS_Output_Pin, GPIO_PIN_RESET);
-
-	/*Configure GPIO pin : Relay_Output_Pin */
-	GPIO_InitStruct.Pin = Relay_Output_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-	GPIO_InitStruct.Pull = GPIO_NOPULL;
-	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-	HAL_GPIO_Init(Relay_Output_GPIO_Port, &GPIO_InitStruct);
 
 	/*Configure GPIO pin : CS_Output_Pin */
 	GPIO_InitStruct.Pin = CS_Output_Pin;
@@ -104,30 +94,26 @@ void API_BME680_HAL_SPI_Init(void) {
 // Transmitir datos a través de SPI
 void API_BME680_HAL_Transmit(uint8_t *pData, uint16_t size) {
 
-	//API_BME680_selectPin();
 	HAL_SPI_Transmit(&hspi1, pData, size, TIMEOUT);
-	//API_BME680_deselectPin();
 
 }
 
 // Recibir datos a través de SPI
 void API_BME680_HAL_Receive(uint8_t *pData, uint16_t size) {
 
-	//API_BME680_selectPin();
 	HAL_SPI_Receive(&hspi1, pData, size, TIMEOUT);
-	//API_BME680_deselectPin();
 
 }
 
 // Control del pin CS (Chip Select)
-void API_BME680_selectPin(uint8_t port, uint8_t pin) {
+void API_BME680_selectPin(void) {
 
-	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(CS_Output_GPIO_Port, CS_Output_Pin, GPIO_PIN_RESET);
 
 }
 
-void API_BME680_deselectPin(uint8_t port, uint8_t pin) {
+void API_BME680_deselectPin(void) {
 
-	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(CS_Output_GPIO_Port, CS_Output_Pin, GPIO_PIN_SET);
 
 }
