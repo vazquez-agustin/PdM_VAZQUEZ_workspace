@@ -18,6 +18,8 @@
 
 void API_BME680_Initialize(void);
 
+void API_BME680_forceMeasurement(void);
+
 //void API_BME680_writeRegister(uint8_t reg, uint8_t value);
 
 //void API_BME680_readRegister(uint8_t reg, uint8_t* data);
@@ -30,7 +32,7 @@ uint32_t API_BME680_readPressADC(void);
 uint32_t API_BME680_readHumADC(void);
 void API_BME680_setMemoryPage(uint8_t page);
 
-double API_BME680_calculateTemperature(uint32_t temp_adc);
+int16_t API_BME680_calculateTemperature(uint32_t temp_adc);
 double API_BME680_calculatePressure(uint32_t press_adc);
 
 void API_BME680_readCalibrationData(void);

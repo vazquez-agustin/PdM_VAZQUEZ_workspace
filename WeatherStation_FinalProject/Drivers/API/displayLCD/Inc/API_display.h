@@ -12,7 +12,13 @@
 
 #include <stdint.h>
 
+/* Public define -------------------------------------------------------------*/
+
+#define LINE1 0
+#define LINE2 1
+
 /* Exported functions prototypes ---------------------------------------------*/
+
 
 void API_display_Init(void);
 void API_display_Clear(void);

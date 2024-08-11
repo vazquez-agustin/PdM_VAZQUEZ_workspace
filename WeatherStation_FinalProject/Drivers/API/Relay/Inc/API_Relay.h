@@ -15,8 +15,8 @@
 /* Function Prototypes -------------------------------------------------------*/
 
 void API_Relay_Init(void);
-void API_Relay_On(uint8_t port, uint8_t pin);
-void API_Relay_Off(uint8_t port, uint8_t pin);
-void API_Relay_Toggle(uint8_t port, uint8_t pin);
+void API_Relay_On(void);
+void API_Relay_Off(void);
+void API_Relay_Toggle(void);
 
 #endif /* API_RELAY_INC_API_RELAY_H_ */

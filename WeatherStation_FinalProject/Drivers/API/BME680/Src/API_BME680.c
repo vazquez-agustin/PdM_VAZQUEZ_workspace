@@ -15,7 +15,7 @@
 /////////////////////
 BME680_CalibData calib;
 
-//static uint8_t API_BME680_readChipID(void);
+static uint8_t API_BME680_readChipID(void);
 static void API_BME680_readRegister(uint8_t reg, uint8_t *data);
 static void API_BME680_writeRegister(uint8_t reg, uint8_t value);
 
@@ -35,16 +35,36 @@ void API_BME680_setMemoryPage(uint8_t page) {
 
 }
 
+void API_BME680_forceMeasurement(void) {
+
+	uint8_t ctrl_meas = (0x02 << 5) | (0x05 << 2); // osrs_t<2:0> = 0b010 (2x), osrs_p<2:0> = 0b101 (16x)
+	uint8_t mode = BME680_MODE_FORCED;
+	API_BME680_writeRegister(BME680_REG_CTRL_MEAS, ctrl_meas | mode);
+
+}
+
 void API_BME680_Initialize(void) {
+	/*
+	API_BME680_setMemoryPage(0);
+
+	API_BME680_readChipID();
+
+	//uint8_t ctrl_reset = 0xb6;
+	//API_BME680_writeRegister(0x60, ctrl_reset);
+
+	API_BME680_HAL_Delay(10);
+	*/
+	API_BME680_setMemoryPage(1);
 
 	// 1. Configura la sobremuestreo de humedad a 1x
-	uint8_t ctrl_hum = (0x01 & 0x07);  // osrs_h<2:0> = 0b001 (1x)
+	uint8_t ctrl_hum = (0x01);  // osrs_h<2:0> = 0b001 (1x)
 	API_BME680_writeRegister(BME680_REG_CTRL_HUM, ctrl_hum);
 
 	// 2. Configura la sobremuestreo de temperatura a 2x y presión a 16x
 	uint8_t ctrl_meas = (0x02 << 5) | (0x05 << 2); // osrs_t<2:0> = 0b010 (2x), osrs_p<2:0> = 0b101 (16x)
+	//API_BME680_writeRegister(0x75, 0);
 	API_BME680_writeRegister(BME680_REG_CTRL_MEAS, ctrl_meas);
-
+	/*
 	// 3. Configura la duración del calentamiento del sensor de gas a 100 ms
 	uint8_t gas_wait_0 = 0x59;  // 100 ms heat up
 	API_BME680_writeRegister(BME680_REG_GAS_WAIT_0, gas_wait_0);
@@ -57,10 +77,11 @@ void API_BME680_Initialize(void) {
 	// 5. Selecciona los parámetros del calentador y activa la medición de gas
 	uint8_t ctrl_gas_1 = (0x00 & 0x0F) | (1 << 4); // nb_conv<3:0> = 0x0, run_gas = 1
 	API_BME680_writeRegister(BME680_REG_CTRL_GAS_1, ctrl_gas_1);
-
+	*/
 	// 6. Establece el modo en "forced mode" para iniciar la medición
 	uint8_t mode = BME680_MODE_FORCED;
 	API_BME680_writeRegister(BME680_REG_CTRL_MEAS, ctrl_meas | mode);
+
 
 }
 
@@ -97,24 +118,23 @@ uint32_t API_BME680_readTempADC(void) {
 	API_BME680_deselectPin();
 
 	// Combina los bytes en el orden correcto
-	temp_adc = (((uint32_t) t_msb) << 12) | (((uint32_t) t_lsb) << 4)
-			| (((uint32_t) t_xlsb) >> 4);
+	temp_adc = (((uint32_t) t_msb) << 12) | (((uint32_t) t_lsb) << 4) | (((uint32_t) t_xlsb) >> 4);
 
-	return temp_adc;
+	return temp_adc & 0x1ffff;
+
 }
 
-double API_BME680_calculateTemperature(uint32_t temp_adc) {
+int16_t API_BME680_calculateTemperature(uint32_t temp_adc) {
 
 	int32_t var1, var2, var3, temp_comp;
 
 	var1 = ((int32_t) temp_adc >> 3) - ((int32_t) calib.par_t1 << 1);
 	var2 = (var1 * (int32_t) calib.par_t2) >> 11;
-	var3 = ((((var1 >> 1) * (var1 >> 1)) >> 12) * ((int32_t) calib.par_t3 << 4))
-			>> 14;
+	var3 = ((((var1 >> 1) * (var1 >> 1)) >> 12) * ((int32_t) calib.par_t3 << 4)) >> 14;
 	calib.t_fine = var2 + var3;
 	temp_comp = ((calib.t_fine * 5) + 128) >> 8;
 
-	// Devuelve la temperatura compensada
+	//
 	return temp_comp;
 
 }
@@ -184,7 +204,7 @@ double API_BME680_calculatePressure(uint32_t press_adc) {
 	press_comp = (int32_t)(press_comp) +
 				((var1 + var2 + var3 + ((int32_t)calib.par_p7 << 7)) >> 4);
 
-	return press_comp;
+	return press_comp / 100.0; // Conversion from Pa to hPa
 
 }
 
@@ -354,6 +374,8 @@ static void API_BME680_writeRegister(uint8_t reg, uint8_t value) {
 	API_BME680_HAL_Transmit(&value, sizeof(value)); //////////
 	API_BME680_deselectPin();
 
+	API_BME680_HAL_Delay(10);
+
 }
 
 static void API_BME680_readRegister(uint8_t reg, uint8_t *data) {
@@ -367,7 +389,7 @@ static void API_BME680_readRegister(uint8_t reg, uint8_t *data) {
 
 }
 
-/*
+
  // Initialize BME680 by reading ChipID
  void API_BME680_Init(void) {
 
@@ -381,7 +403,7 @@ static void API_BME680_readRegister(uint8_t reg, uint8_t *data) {
  // Read Chip ID ESTA BIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN
  static uint8_t API_BME680_readChipID(void) {
 
- API_BME680_setMemoryPage(0);
+ //API_BME680_setMemoryPage(0);
 
  uint8_t reg = BME680_REG_CHIP_ID | 0x80;
  uint8_t chip_id = 0;
@@ -394,4 +416,4 @@ static void API_BME680_readRegister(uint8_t reg, uint8_t *data) {
  return chip_id;
 
  }
- */
+
