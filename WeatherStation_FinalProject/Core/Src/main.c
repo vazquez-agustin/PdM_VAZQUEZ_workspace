@@ -19,9 +19,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "API_BME680.h"
-#include "API_BME680_HAL.h"
+#include "API_Relay.h"
 #include "API_display.h"
-#include "API_display_HAL.h"
+#include "Application_FSM.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -35,17 +35,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
-#define BME680_CHIP_ID 0x61
-
-#define BME680_READ_REG  0x80
-#define BME680_WRITE_REG 0x7F
-#define BME680_TEMP_MSB  0x22 // Registro de temperatura MSB
-
-// Define los comandos de SPI y registros del BME680
-#define BME680_TEMP_MSB_REG  0x22 // Registro de temperatura MSB
-#define BME680_TEMP_LSB_REG  0x23 // Registro de temperatura LSB
-#define BME680_TEMP_XLSB_REG 0x24 // Registro de temperatura XLSB (si aplica)
 
 /* USER CODE END PD */
 
@@ -78,60 +67,49 @@ void SystemClock_Config(void);
  */
 int main(void) {
 
-	/* USER CODE BEGIN 1 */
-
-	/* USER CODE END 1 */
-
 	/* MCU Configuration--------------------------------------------------------*/
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 
-	/* USER CODE BEGIN Init */
-
-	/* USER CODE END Init */
-
 	/* Configure the system clock */
 	SystemClock_Config();
 
-	/* USER CODE BEGIN SysInit */
-
-	/* USER CODE END SysInit */
-
 	/* Initialize all configured peripherals */
-	API_BME680_HAL_GPIO_Init();
-	API_display_HAL_I2C_Init();
-	API_BME680_HAL_SPI_Init();
 
-	API_display_Clear();
-	API_display_Init();
+	// GPIO BME680 & Relay Initialization
+	API_BME680_HAL_GPIO_Init();
+	// SPI & I2C Initialization
+	API_BME680_HAL_SPI_Init();
+	API_display_HAL_I2C_Init();
+
 	/* USER CODE BEGIN 2 */
-	// Leer datos de calibración
+
+	// Initialize FSM
+	API_BME680_Initialize();
+
 	API_BME680_readCalibrationData();
 
-	API_BME680_readTemperature();
-
-	// Leer y mostrar la temperatura
-	float temperature = API_BME680_readTemperature();
-
-	// Aquí puedes usar tus funciones de LCD para mostrar los valores
-
-	//API_display_SendString("Temp:  ");
-
-	char buffer[16];
-	snprintf(buffer, sizeof(buffer), "Temp: %.2f C", temperature);
-	API_display_SetCursor(0, 0);
-	API_display_SendString(buffer);
-	//API_display_SendString(" C");
-
-	/* USER CODE END 2 */
+	HAL_Delay(200);  // Ajusta según el tiempo de medición configurado
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1) {
-		/* USER CODE END WHILE */
 
-		/* USER CODE BEGIN 3 */
+		//API_BME680_forceMeasurement();
+
+		// Leer temperatura
+		uint32_t temp_adc = API_BME680_readTempADC();
+		uint32_t temperature = API_BME680_calculateTemperature(temp_adc);
+
+		// Leer presión
+		uint32_t press_adc = API_BME680_readPressADC();
+		uint32_t pressure = API_BME680_calculatePressure(press_adc);
+
+		// Leer humedad
+		uint32_t humd_adc = API_BME680_readHumADC();
+		uint32_t humidity = API_BME680_calculateHumidity(humd_adc, temperature);
+
 	}
 	/* USER CODE END 3 */
 }
@@ -173,10 +151,6 @@ void SystemClock_Config(void) {
 		Error_Handler();
 	}
 }
-
-/* USER CODE BEGIN 4 */
-
-/* USER CODE END 4 */
 
 /**
  * @brief  This function is executed in case of error occurrence.

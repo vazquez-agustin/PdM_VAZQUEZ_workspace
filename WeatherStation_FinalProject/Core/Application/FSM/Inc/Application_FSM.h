@@ -12,7 +12,16 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <string.h>
+#include <stdio.h>
+#include "API_BME680.h"
+#include "API_Relay.h"
+#include "API_display.h"
+#include "API_delay.h"
+
+typedef bool bool_t;
+
+#define THRESHOLD_TEMP 24 // In °C
+#define NORMAL_TEMP 22 // In °C
 
 /* Exported functions prototypes ---------------------------------------------*/
 

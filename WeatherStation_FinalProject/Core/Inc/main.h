@@ -57,6 +57,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define Relay_Output_Pin GPIO_PIN_4
+#define Relay_Output_GPIO_Port GPIOE
 #define SDO_Pin GPIO_PIN_6
 #define SDO_GPIO_Port GPIOA
 #define SDA_Pin GPIO_PIN_7
