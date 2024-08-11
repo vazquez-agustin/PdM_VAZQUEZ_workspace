@@ -1,0 +1,4 @@
+../Drivers/API/Relay/Src/API_Relay_HAL.c:14:6:API_Relay_HAL_GPIO_Init	1
+../Drivers/API/Relay/Src/API_Relay_HAL.c:36:6:API_Relay_HAL_selectPin	1
+../Drivers/API/Relay/Src/API_Relay_HAL.c:42:6:API_Relay_HAL_deselectPin	1
+../Drivers/API/Relay/Src/API_Relay_HAL.c:48:6:API_Relay_HAL_Toggle	1
