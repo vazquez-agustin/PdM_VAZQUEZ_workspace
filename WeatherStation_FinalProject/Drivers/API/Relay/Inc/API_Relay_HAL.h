@@ -2,7 +2,7 @@
  * API_Relay_HAL.h
  *
  *  Created on: Aug 8, 2024
- *      Author: ubuntu
+ *      Author: Agustin Vazquez
  */
 
 #ifndef API_RELAY_INC_API_RELAY_HAL_H_
@@ -18,8 +18,8 @@
 
 /* Private define ------------------------------------------------------------*/
 
-#define Relay_Output_Pin GPIO_PIN_4
-#define Relay_Output_GPIO_Port GPIOE
+#define Relay_Output_Pin        GPIO_PIN_4
+#define Relay_Output_GPIO_Port  GPIOE
 
 /* Function Prototypes -------------------------------------------------------*/
 

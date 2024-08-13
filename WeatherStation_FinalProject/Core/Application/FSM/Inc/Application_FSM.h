@@ -2,7 +2,7 @@
  * Application_FSM.h
  *
  *  Created on: Aug 8, 2024
- *      Author: ubuntu
+ *      Author: Agustin Vazquez
  */
 
 #ifndef APPLICATION_FSM_INC_APPLICATION_FSM_H_
@@ -18,7 +18,15 @@
 #include "API_display.h"
 #include "API_delay.h"
 
+/* HAL Includes --------------------------------------------------------------*/
+
+#include "stm32f4xx_hal.h"
+
+/* Exported types ------------------------------------------------------------*/
+
 typedef bool bool_t;
+
+/* Public define -------------------------------------------------------------*/
 
 #define THRESHOLD_TEMP 24 // In °C
 #define NORMAL_TEMP 22 // In °C

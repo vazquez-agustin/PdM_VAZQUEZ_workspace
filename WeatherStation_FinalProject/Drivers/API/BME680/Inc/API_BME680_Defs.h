@@ -2,7 +2,7 @@
  * API_BME680_Refs.h
  *
  *  Created on: Aug 8, 2024
- *      Author: ubuntu
+ *      Author: Agustin Vazquez
  */
 
 #ifndef API_BME680_INC_API_BME680_DEFS_H_
@@ -24,14 +24,11 @@
 // Memory page 1
 
 // Initialization (Quick Start commands)
+#define BME680_REG_MEM_PAGE1       0x73
+#define BME680_PAGE1               0x10
+#define BME680_PAGE2               0x00
 #define BME680_REG_CTRL_HUM        0x72  // Humidity control
-#define BME680_REG_CTRL_MEAS       0x74  // Control de medición (temp y presión)
-#define BME680_REG_CONFIG          0x75  // General configuration
-#define BME680_REG_CTRL_GAS_1      0x71  // Gas measure control
-#define BME680_REG_CTRL_GAS_0      0x70  // Gas sensor configuration
-#define BME680_REG_GAS_WAIT_0      0x64  // Duración del calentamiento del sensor de gas
-#define BME680_REG_RES_HEAT_0      0x5A  // Configuración del calentador del sensor de gas
-
+#define BME680_REG_CTRL_MEAS       0x74  // Measure control (temperature & pressure)
 #define BME680_MODE_SLEEP          0x00
 #define BME680_MODE_FORCED         0x01
 
@@ -118,26 +115,6 @@
 #define BME680_REG_HUM_ADC_LSB     0x26
 #define BME680_REG_HUM_ADC_MSB     0x25
 
-// Addresses for gas_res calculation
-// par_g1
-#define BME680_REG_PAR_G1          0xED
-// par_g2
-#define BME680_REG_PAR_G2_LSB      0xEB
-#define BME680_REG_PAR_G2_MSB      0xEC
-// par_g3
-#define BME680_REG_PAR_G3          0xEE
-// res_heat_range (0x02 <5:4>)
-#define BME680_REG_RES_HEAT_RG     0x02
-// res_heat_val
-#define BME680_REG_RES_HEAT_VAL    0x00
-// gass_adc (0x2B<7:6> / 0x2A)
-#define BME680_REG_GAS_ADC_LSB     0x2B
-#define BME680_REG_GAS_ADC_MSB     0x2A
-// gas_range (0x2B<3:0>)
-#define BME680_REG_GAS_RG          0x2B
-// range_switching_error
-#define BME680_REG_RG_SWITCH_ERR   0x04
-
 /*
  * @brief Structure to hold the calibration coefficients
  * TAKEN FROM BOSCH GITHUB (But modified)
@@ -161,15 +138,6 @@ typedef struct {
     int8_t par_h7;
 
     int32_t hum_adc;
-
-    /*! Calibration coefficients for the gas sensor */
-    int8_t par_gh1;
-
-    int16_t par_gh2;
-
-    int8_t par_gh3;
-
-    int32_t gas_adc;
 
     /*! Calibration coefficients for the temperature sensor */
     uint16_t par_t1;
@@ -205,15 +173,6 @@ typedef struct {
 
     /*! Variable to store the intermediate temperature coefficient */
     int32_t t_fine;
-
-    /*! Heater resistance range coefficient */
-    uint8_t res_heat_range;
-
-    /*! Heater resistance value coefficient */
-    int8_t res_heat_val;
-
-    /*! Gas resistance range switching error coefficient */
-    int8_t range_sw_err;
 
 } BME680_CalibData;
 

@@ -2,7 +2,7 @@
  * API_display_HAL.c
  *
  *  Created on: Jul 30, 2024
- *      Author: ubuntu
+ *      Author: Agustin Vazquez
  */
 
 /* Includes ------------------------------------------------------------------*/
@@ -20,7 +20,13 @@ I2C_HandleTypeDef hi2c1;
 
 /* HAL API code --------------------------------------------------------------*/
 
+/**
+  * @brief  Provide a delay in milliseconds.
+  * @param  delay: Time to delay in milliseconds.
+  * @retval None
+  */
 void API_display_HAL_Delay(uint32_t delay) {
+
 	/**
 	 * @brief This function provides minimum delay (in milliseconds) based
 	 *        on variable incremented.
@@ -33,14 +39,15 @@ void API_display_HAL_Delay(uint32_t delay) {
 	 * @retval None
 	 */
 	HAL_Delay(delay);
+
 }
 
 /**
- * @brief I2C1 Initialization Function
- * @param None
- * @retval None
- */
+  * @brief  Initialize the I2C1 peripheral for communication with the display.
+  * @retval None
+  */
 void API_display_HAL_I2C_Init(void) {
+
 	/* I2C1 parameter configuration*/
 	hi2c1.Instance = I2C1;
 	hi2c1.Init.ClockSpeed = 100000;
@@ -51,6 +58,7 @@ void API_display_HAL_I2C_Init(void) {
 	hi2c1.Init.OwnAddress2 = 0;
 	hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
 	hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
+
 	if (HAL_I2C_Init(&hi2c1) != HAL_OK) {
 		Error_Handler();
 	}
@@ -69,7 +77,14 @@ void API_display_HAL_I2C_Init(void) {
 
 }
 
+/**
+  * @brief  Write data to the display via I2C.
+  * @param  data: Pointer to the data buffer.
+  * @param  size: Amount of data to send.
+  * @retval None
+  */
 void API_display_HAL_I2C_Write(uint8_t *data, uint16_t size) {
+
 	/**
 	 * @brief  Transmits in master mode an amount of data in blocking mode.
 	 * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
@@ -82,4 +97,5 @@ void API_display_HAL_I2C_Write(uint8_t *data, uint16_t size) {
 	 * @retval HAL status
 	 */
 	HAL_I2C_Master_Transmit(&hi2c1, ADDRESS << 1, data, size, TIMEOUT);
+
 }

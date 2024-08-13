@@ -2,7 +2,7 @@
  * API_Relay_HAL.c
  *
  *  Created on: Aug 8, 2024
- *      Author: ubuntu
+ *      Author: Agustin Vazquez
  */
 
 /* Includes ------------------------------------------------------------------*/
@@ -11,6 +11,10 @@
 
 /* HAL API code --------------------------------------------------------------*/
 
+/**
+  * @brief  Initialize the GPIO for the relay.
+  * @retval None
+  */
 void API_Relay_HAL_GPIO_Init(void) {
 
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
@@ -32,22 +36,26 @@ void API_Relay_HAL_GPIO_Init(void) {
 
 }
 
-
+/**
+  * @brief  Select the GPIO pin by setting it to a low level (activate the relay).
+  * @param  port: GPIO port.
+  * @param  pin: GPIO pin.
+  * @retval None
+  */
 void API_Relay_HAL_selectPin(uint8_t port, uint8_t pin) {
 
 	HAL_GPIO_WritePin(port, pin, GPIO_PIN_RESET);
 
 }
 
+/**
+  * @brief  Deselect the GPIO pin by setting it to a high level (deactivate the relay).
+  * @param  port: GPIO port.
+  * @param  pin: GPIO pin.
+  * @retval None
+  */
 void API_Relay_HAL_deselectPin(uint8_t port, uint8_t pin) {
 
 	HAL_GPIO_WritePin(port, pin, GPIO_PIN_SET);
 
 }
-
-void API_Relay_HAL_Toggle(uint8_t port, uint8_t pin) {
-
-	HAL_GPIO_TogglePin(port, pin);
-
-}
-

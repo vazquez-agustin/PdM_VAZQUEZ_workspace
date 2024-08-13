@@ -2,7 +2,7 @@
  * API_BME680_HAL.c
  *
  *  Created on: Aug 3, 2024
- *      Author: ubuntu
+ *      Author: Agustin Vazquez
  */
 
 /* Includes ------------------------------------------------------------------*/
@@ -16,6 +16,10 @@ SPI_HandleTypeDef hspi1;
 /* Private define ------------------------------------------------------------*/
 
 #define TIMEOUT 1000
+
+/* Private function prototypes -----------------------------------------------*/
+
+static void API_BME680_Error_Handler(void);
 
 /* HAL API code --------------------------------------------------------------*/
 
@@ -85,7 +89,7 @@ void API_BME680_HAL_SPI_Init(void) {
 
 	if (HAL_SPI_Init(&hspi1) != HAL_OK) {
 
-		Error_Handler();
+		API_BME680_Error_Handler();
 
 	}
 
@@ -115,5 +119,20 @@ void API_BME680_selectPin(void) {
 void API_BME680_deselectPin(void) {
 
 	HAL_GPIO_WritePin(CS_Output_GPIO_Port, CS_Output_Pin, GPIO_PIN_SET);
+
+}
+
+/**
+  * @brief  Handles critical errors by disabling interrupts and entering an infinite loop.
+  *         Used as a last resort error handler when conditions are outside expected parameters.
+  * @retval None
+  */
+static void API_BME680_Error_Handler(void) {
+
+	__disable_irq();
+
+	while (1) {
+
+	}
 
 }

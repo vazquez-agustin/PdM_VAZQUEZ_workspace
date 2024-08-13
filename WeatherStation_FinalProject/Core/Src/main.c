@@ -83,35 +83,16 @@ int main(void) {
 	API_BME680_HAL_SPI_Init();
 	API_display_HAL_I2C_Init();
 
-	/* USER CODE BEGIN 2 */
-
-	// Initialize FSM
-	API_BME680_Initialize();
-
-	API_BME680_readCalibrationData();
-
-	HAL_Delay(200);  // Ajusta según el tiempo de medición configurado
+	// FSM Initialization
+	App_FSM_Init();
 
 	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
 	while (1) {
-
-		//API_BME680_forceMeasurement();
-
-		// Leer temperatura
-		uint32_t temp_adc = API_BME680_readTempADC();
-		uint32_t temperature = API_BME680_calculateTemperature(temp_adc);
-
-		// Leer presión
-		uint32_t press_adc = API_BME680_readPressADC();
-		uint32_t pressure = API_BME680_calculatePressure(press_adc);
-
-		// Leer humedad
-		uint32_t humd_adc = API_BME680_readHumADC();
-		uint32_t humidity = API_BME680_calculateHumidity(humd_adc, temperature);
+		// FSM Update state
+		App_FSM_Update();
 
 	}
-	/* USER CODE END 3 */
+
 }
 
 /**

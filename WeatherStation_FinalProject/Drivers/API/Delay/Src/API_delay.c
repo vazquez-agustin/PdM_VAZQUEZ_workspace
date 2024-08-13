@@ -2,14 +2,17 @@
  * API_delay.c
  *
  *  Created on: Jul 4, 2024
- *      Author: Laura Moreno
+ *      Author: Agustin Vazquez
  */
 
 /* Includes ------------------------------------------------------------------*/
+
 #include "API_delay.h"
+#include "API_delay_HAL.h"
 
 /* Private function prototypes -----------------------------------------------*/
-void delayErrorHandler(void);
+
+static void delayErrorHandler(void);
 
 /**
  * @brief  Initialize timer
@@ -38,24 +41,32 @@ void delayInit(delay_t *delay, tick_t duration){
 bool_t delayRead(delay_t *delay){
 
 	if(delay == NULL) {
+
 		delayErrorHandler();
+
 	}
 
 	if(delay->running){
+
 		tick_t currentTime = HAL_GetTick();
 		tick_t diff = currentTime - delay->startTime;
 
 		if (diff >= delay->duration) {
+
 			delay->running = false;
 			return true;
+
 		}
 
 	} else {
+
 		delay->startTime = HAL_GetTick();
 		delay->running = true;
+
 	}
 
 	return false;
+
 }
 
 /**
@@ -91,10 +102,11 @@ bool_t delayIsRunning(delay_t * delay) {
  * @brief  This function is executed in case of error occurrence.
  * @retval None
  */
-void delayErrorHandler(void)
-{
+static void delayErrorHandler(void) {
+
 	__disable_irq();
 	while (1)
 	{
 	}
+
 }

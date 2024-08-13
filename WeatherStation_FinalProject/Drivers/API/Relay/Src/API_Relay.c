@@ -2,7 +2,7 @@
  * API_Relay.c
  *
  *  Created on: Aug 8, 2024
- *      Author: ubuntu
+ *      Author: Agustin Vazquez
  */
 
 /* Includes ------------------------------------------------------------------*/
@@ -14,32 +14,32 @@
 
 /* Function Implementations --------------------------------------------------*/
 
-// Initialize relay module
+/**
+  * @brief  Initialize the relay module.
+  * @retval None
+  */
 void API_Relay_Init(void) {
 
 	API_Relay_HAL_GPIO_Init();
 
 }
 
-// Activate the relay
+/**
+  * @brief  Activate the relay.
+  * @retval None
+  */
 void API_Relay_On(void) {
 
 	API_Relay_HAL_deselectPin(Relay_Output_GPIO_Port, Relay_Output_Pin);
 
 }
 
-// Deactivate the relay
+/**
+  * @brief  Deactivate the relay.
+  * @retval None
+  */
 void API_Relay_Off(void) {
 
 	API_Relay_HAL_selectPin(Relay_Output_GPIO_Port, Relay_Output_Pin);
 
 }
-
-// Alternate relay state
-void API_Relay_Toggle(void) {
-
-	API_Relay_HAL_Toggle(Relay_Output_GPIO_Port, Relay_Output_Pin);
-
-}
-
-

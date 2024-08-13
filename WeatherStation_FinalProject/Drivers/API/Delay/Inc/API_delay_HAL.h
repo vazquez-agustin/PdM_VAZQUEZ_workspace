@@ -1,12 +1,12 @@
 /*
- * API_display_HAL.h
+ * API_delay_HAL.h
  *
- *  Created on: Jul 30, 2024
+ *  Created on: Aug 13, 2024
  *      Author: Agustin Vazquez
  */
 
-#ifndef API_DISPLAYLCD_INC_API_DISPLAY_HAL_H_
-#define API_DISPLAYLCD_INC_API_DISPLAY_HAL_H_
+#ifndef API_DELAY_INC_API_DELAY_HAL_H_
+#define API_DELAY_INC_API_DELAY_HAL_H_
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -18,10 +18,6 @@
 
 /* Function Prototypes -------------------------------------------------------*/
 
-void API_display_HAL_Delay(uint32_t delay);
+uint32_t API_delay_HAL_getTick(void);
 
-void API_display_HAL_I2C_Init(void);
-
-void API_display_HAL_I2C_Write(uint8_t *data, uint16_t size);
-
-#endif /* API_DISPLAYLCD_INC_API_DISPLAY_HAL_H_ */
+#endif /* API_DELAY_INC_API_DELAY_HAL_H_ */
