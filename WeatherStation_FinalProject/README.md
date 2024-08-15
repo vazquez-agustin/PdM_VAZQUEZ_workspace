@@ -1,18 +1,22 @@
+```
+
 ### FINITE STATE MACHINE
 
+```mermaid
 
 stateDiagram-v2
-    [*] --> STATE_IDLE
+[*] --> SI
 
-    STATE_IDLE : Init system: sensor, display, etc.
-    STATE_READ_SENSOR : Read temperature from sensor
-    STATE_CONTROL : Check temperature within limits
-    STATE_ALARM : Alarm triggered, activate relay
+state "STATLE IDLE" AS SI: Waiting a timeout
+state "STATE READ SENSOR" as SRS: Reading temperatura
+state "STATE CONTROL" as SC: Check temperature within limits
+state "STATE ALARM" as SA: Alarm triggered, activate relay
 
-    STATE_IDLE --> STATE_READ_SENSOR : delayRead() complete
-    STATE_READ_SENSOR --> STATE_CONTROL : Temperature read
-    STATE_CONTROL --> STATE_IDLE : Temperature OK
-    STATE_CONTROL --> STATE_ALARM : Temperature exceeds threshold
-    STATE_ALARM --> STATE_IDLE : Temperature back to normal after delay
-    STATE_ALARM --> STATE_READ_SENSOR : delayRead() complete
+SI --> SRS : Delay timer expired
+SRS --> SC : Temperature read
+SC --> SI  : Temperature OK
+SC --> SA  : Temperature exceeds threshold
+SA --> SI  : Temperature back to normal after delay
+SA --> SRS : Delay timer expired
 
+```
