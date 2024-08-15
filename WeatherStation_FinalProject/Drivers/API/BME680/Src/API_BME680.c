@@ -13,7 +13,9 @@
 
 /* Private define ------------------------------------------------------------*/
 
-BME680_CalibData calib;
+static BME680_CalibData calib;
+
+/* Private function prototypes -----------------------------------------------*/
 
 static void API_BME680_readRegister(uint8_t reg, uint8_t *data);
 static void API_BME680_writeRegister(uint8_t reg, uint8_t value);
