@@ -1,3 +1,19 @@
+### Trabajo Práctico Final: Estación de Control de Temperatura
+
+## Programación de Microcontroladores
+## Protocolos de Comunicación en Sistemas Embebidos
+
+* Alumno: Ing. Agustín Jesús Vazquez
+
+* Profesor PdM: Mg. Ing. Patricio Bos
+* Profesor PCSE: Ing. Israel Pavelek
+
+# Descripción del proyecto
+
+La aplicación propuesta consiste en la medición de los parámetros de temperatura, presión y humedad, a través del sensor BME680. 
+Los resultados de dichas mediciones se visualizan en un display LCD 1602.
+
+
 ## FINITE STATE MACHINE
 
 ```mermaid
@@ -12,5 +28,5 @@ SRS --> SC : Temperature read
 SC --> SI  : Temperature OK
 SC --> SA  : Temperature exceeds threshold
 SA --> SI  : Temperature back to normal after delay
-SA --> SRS : Delay timer expired
+SA --> SA  : Temperature read
 ```
