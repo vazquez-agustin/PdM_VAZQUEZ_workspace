@@ -1,7 +1,7 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Ej0_blinky,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise2 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise3 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Practica_4,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise_1.1 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise_1.2,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Prueba Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Reloj con RTC_interno,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:WeatherStation_FinalProject,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Ej2_uart,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise5
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Ej0_blinky,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise2 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise3 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Practica_4,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Ej2_uart,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise5,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise_1.1 Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Exercise_1.2,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Prueba Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Reloj con RTC_interno
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Ej0_blinky/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Ej0_blinky/activeLaunchTarget=null\:---
@@ -23,4 +23,4 @@ org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Practica_3/activeLaunchMode=deb
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Practica_4/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Practica_5/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Reloj\ con\ RTC_interno/activeLaunchMode=run
-org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:WeatherStation_FinalProject/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:WeatherStation_FinalProject/activeLaunchMode=debug

@@ -1,6 +1,15 @@
 # Prerequisites
 *.d
 
+*/.settings/*
+.metadata/
+*/Binaries/
+*/Debug/
+*.launch
+
+# Prerequisites
+*.d
+
 # Object files
 *.o
 *.ko
@@ -47,6 +56,10 @@
 *.cmd
 .tmp_versions/
 modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+/.metadata/
 Module.symvers
 Mkfile.old
 dkms.conf

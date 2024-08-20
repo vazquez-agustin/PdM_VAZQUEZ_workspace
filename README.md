@@ -42,3 +42,9 @@ Implementar una maquina de estados finitos con la lógica del antirebote por sof
 
 Se implementa comunicación serial por el protocolo UART.
 
+# Práctica Final - Weather Station Project
+
+* Resolución general: en directorio PdM_VAZQUEZ_workspace/WeatherStation_FinalProject
+
+Se desarrolla el proyecto final de Programación de Microcontroladores y Protocolos de Comunicación en Sistemas Embebidos
+

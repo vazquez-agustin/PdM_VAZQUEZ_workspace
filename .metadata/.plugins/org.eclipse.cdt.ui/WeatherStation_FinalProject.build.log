@@ -1,10 +1,69 @@
-15:54:14 **** Incremental Build of configuration Debug for project WeatherStation_FinalProject ****
-make -j16 all 
+23:51:13 **** Incremental Build of configuration Debug for project WeatherStation_FinalProject ****
+make -j8 all 
+arm-none-eabi-gcc "../Drivers/API/Relay/Src/API_Relay.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/displayLCD/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/BME680/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Core/Application/FSM/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Delay/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/API/Relay/Src/API_Relay.d" -MT"Drivers/API/Relay/Src/API_Relay.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/Relay/Src/API_Relay.o"
+arm-none-eabi-gcc "../Drivers/API/BME680/Src/API_BME680.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/displayLCD/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/BME680/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Core/Application/FSM/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Delay/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/API/BME680/Src/API_BME680.d" -MT"Drivers/API/BME680/Src/API_BME680.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/BME680/Src/API_BME680.o"
+arm-none-eabi-gcc "../Drivers/API/BME680/Src/API_BME680_HAL.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/displayLCD/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/BME680/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Core/Application/FSM/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Delay/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Drivers/API/BME680/Src/API_BME680_HAL.d" -MT"Drivers/API/BME680/Src/API_BME680_HAL.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Drivers/API/BME680/Src/API_BME680_HAL.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/displayLCD/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/BME680/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Core/Application/FSM/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Delay/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Application/FSM/Src/Application_FSM.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/displayLCD/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/BME680/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Core/Application/FSM/Inc" -I"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Delay/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Application/FSM/Src/Application_FSM.d" -MT"Core/Application/FSM/Src/Application_FSM.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Application/FSM/Src/Application_FSM.o"
+In file included from ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:140,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h:29,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:27,
+                 from ../Core/Inc/stm32f4xx_hal_conf.h:275,
+                 from ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:29,
+                 from /home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc/API_Relay_HAL.h:13,
+                 from ../Drivers/API/Relay/Src/API_Relay.c:11:
+../Drivers/API/Relay/Src/API_Relay.c: In function 'API_Relay_On':
+../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f429xx.h:1252:29: warning: passing argument 1 of 'API_Relay_HAL_deselectPin' makes integer from pointer without a cast [-Wint-conversion]
+ 1252 | #define GPIOE               ((GPIO_TypeDef *) GPIOE_BASE)
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                             |
+      |                             GPIO_TypeDef *
+/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc/API_Relay_HAL.h:22:33: note: in expansion of macro 'GPIOE'
+   22 | #define Relay_Output_GPIO_Port  GPIOE
+      |                                 ^~~~~
+../Drivers/API/Relay/Src/API_Relay.c:33:35: note: in expansion of macro 'Relay_Output_GPIO_Port'
+   33 |         API_Relay_HAL_deselectPin(Relay_Output_GPIO_Port, Relay_Output_Pin);
+      |                                   ^~~~~~~~~~~~~~~~~~~~~~
+/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc/API_Relay_HAL.h:28:40: note: expected 'uint8_t' {aka 'unsigned char'} but argument is of type 'GPIO_TypeDef *'
+   28 | void API_Relay_HAL_deselectPin(uint8_t port, uint8_t pin);
+      |                                ~~~~~~~~^~~~
+../Drivers/API/Relay/Src/API_Relay.c: In function 'API_Relay_Off':
+../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f429xx.h:1252:29: warning: passing argument 1 of 'API_Relay_HAL_selectPin' makes integer from pointer without a cast [-Wint-conversion]
+ 1252 | #define GPIOE               ((GPIO_TypeDef *) GPIOE_BASE)
+      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                             |
+      |                             GPIO_TypeDef *
+/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc/API_Relay_HAL.h:22:33: note: in expansion of macro 'GPIOE'
+   22 | #define Relay_Output_GPIO_Port  GPIOE
+      |                                 ^~~~~
+../Drivers/API/Relay/Src/API_Relay.c:43:33: note: in expansion of macro 'Relay_Output_GPIO_Port'
+   43 |         API_Relay_HAL_selectPin(Relay_Output_GPIO_Port, Relay_Output_Pin);
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~
+/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/Drivers/API/Relay/Inc/API_Relay_HAL.h:27:38: note: expected 'uint8_t' {aka 'unsigned char'} but argument is of type 'GPIO_TypeDef *'
+   27 | void API_Relay_HAL_selectPin(uint8_t port, uint8_t pin);
+      |                              ~~~~~~~~^~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:81:9: warning: implicit declaration of function 'API_BME680_HAL_GPIO_Init' [-Wimplicit-function-declaration]
+   81 |         API_BME680_HAL_GPIO_Init();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:83:9: warning: implicit declaration of function 'API_BME680_HAL_SPI_Init' [-Wimplicit-function-declaration]
+   83 |         API_BME680_HAL_SPI_Init();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:84:9: warning: implicit declaration of function 'API_display_HAL_I2C_Init'; did you mean 'API_display_Init'? [-Wimplicit-function-declaration]
+   84 |         API_display_HAL_I2C_Init();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+      |         API_display_Init
+arm-none-eabi-gcc -o "WeatherStation_FinalProject.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/ubuntu/Desktop/MSc in Embedded Systems/2. Programación de Microcontroladores (PdM)/PdM_VAZQUEZ_workspace/WeatherStation_FinalProject/STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="WeatherStation_FinalProject.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: WeatherStation_FinalProject.elf
+ 
 arm-none-eabi-size  WeatherStation_FinalProject.elf 
+arm-none-eabi-objdump -h -S WeatherStation_FinalProject.elf  > "WeatherStation_FinalProject.list"
    text	   data	    bss	    dec	    hex	filename
-   9240	     12	   1652	  10904	   2a98	WeatherStation_FinalProject.elf
+  17596	     92	   2148	  19836	   4d7c	WeatherStation_FinalProject.elf
 Finished building: default.size.stdout
  
+Finished building: WeatherStation_FinalProject.list
+ 
 
-15:54:15 Build Finished. 0 errors, 0 warnings. (took 222ms)
+23:51:14 Build Finished. 0 errors, 5 warnings. (took 1s.621ms)
 
